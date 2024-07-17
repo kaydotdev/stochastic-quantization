@@ -50,7 +50,7 @@ experimental evaluations on image and text data reveal significant improvements 
             "similarity learning",
         ],
         install_requires=[
-            "numpy",
-            "scikit-learn",
+            "numpy>=1.26.4,<2",
+            "scikit-learn=1.5.1,<2",
         ]
     )
