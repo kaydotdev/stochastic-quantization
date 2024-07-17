@@ -13,4 +13,5 @@ dependencies:
   - pytorch=2.3
   - pytorch-cuda=11.8
   - torchvision=0.18
+  - tqdm=4.66
   - matplotlib=3.8

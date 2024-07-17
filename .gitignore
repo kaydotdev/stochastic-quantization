@@ -261,3 +261,7 @@ pyvenv.cfg
 pip-selfcheck.json
 .python_packages
 .vscode
+
+# Collected data and generated results
+data/
+results/
