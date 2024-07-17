@@ -1,5 +1,16 @@
 name: stochastic-quantization
 channels:
-  - 
+  - pytorch
+  - anaconda
+  - nvidia
+  - conda-forge
+  - defaults
 dependencies:
-  - 
+  - python=3.11
+  - notebook=7.0
+  - numpy=1.26
+  - scikit-learn=1.5
+  - pytorch=2.3
+  - pytorch-cuda=11.8
+  - torchvision=0.18
+  - matplotlib=3.8
