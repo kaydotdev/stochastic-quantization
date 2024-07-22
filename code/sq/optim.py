@@ -45,10 +45,8 @@ class MomentumOptimizer(BaseOptimizer):
         x: np.ndarray,
         learning_rate: np.float64,
     ) -> np.ndarray:
-        _, x_dims = x.shape
-
         if self.momentum_term is None:
-            self.momentum_term = np.zeros(shape=(1, x_dims))
+            self.momentum_term = np.zeros(shape=(1, x.size))
 
         self.momentum_term = self.gamma * self.momentum_term + learning_rate * grad_fn(
             x
@@ -71,10 +69,8 @@ class NAGOptimizer(BaseOptimizer):
         x: np.ndarray,
         learning_rate: np.float64,
     ) -> np.ndarray:
-        _, x_dims = x.shape
-
         if self.momentum_term is None:
-            self.momentum_term = np.zeros(shape=(1, x_dims))
+            self.momentum_term = np.zeros(shape=(1, x.size))
 
         self.momentum_term = self.gamma * self.momentum_term + learning_rate * grad_fn(
             x - self.gamma * self.momentum_term
@@ -97,10 +93,8 @@ class AdagradOptimizer(BaseOptimizer):
         x: np.ndarray,
         learning_rate: np.float64,
     ) -> np.ndarray:
-        _, x_dims = x.shape
-
         if self.grad_term is None:
-            self.grad_term = np.zeros(shape=(1, x_dims))
+            self.grad_term = np.zeros(shape=(1, x.size))
 
         grad_x = grad_fn(x)
 
@@ -124,10 +118,8 @@ class RMSPropOptimizer(BaseOptimizer):
         x: np.ndarray,
         learning_rate: np.float64,
     ) -> np.ndarray:
-        _, x_dims = x.shape
-
         if self.grad_term is None:
-            self.grad_term = np.zeros(shape=(1, x_dims))
+            self.grad_term = np.zeros(shape=(1, x.size))
 
         grad_x = grad_fn(x)
 
@@ -156,12 +148,11 @@ class AdamOptimizer(BaseOptimizer):
         x: np.ndarray,
         learning_rate: np.float64,
     ) -> np.ndarray:
-        _, x_dims = x.shape
         beta1, beta2 = self.betas
 
         if self.momentum_term is None and self.variance_term is None:
-            self.momentum_term = np.zeros(shape=(1, x_dims))
-            self.variance_term = np.zeros(shape=(1, x_dims))
+            self.momentum_term = np.zeros(shape=(1, x.size))
+            self.variance_term = np.zeros(shape=(1, x.size))
 
         grad_x = grad_fn(x)
 
