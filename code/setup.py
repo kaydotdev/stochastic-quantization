@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     setup(
         name="sq",
         fullname="Stochastic optimal quantization",
@@ -23,7 +23,7 @@ experimental evaluations on image and text data reveal significant improvements 
         url="https://github.com/kaydotdev/stochastic-quantization",
         platforms="Any",
         scripts=[],
-        packages=find_packages(exclude=['tests', 'notebooks']),
+        packages=find_packages(exclude=["tests", "notebooks"]),
         classifiers=[
             "Intended Audience :: Science/Research",
             "Intended Audience :: Education",
@@ -52,5 +52,5 @@ experimental evaluations on image and text data reveal significant improvements 
         install_requires=[
             "numpy>=1.26.4,<2",
             "scikit-learn=1.5.1,<2",
-        ]
+        ],
     )
