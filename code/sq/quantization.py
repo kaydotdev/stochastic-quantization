@@ -21,26 +21,27 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
     def __init__(
         self,
         optim: BaseOptimizer,
-        n_clusters: np.unsignedinteger = 2,
+        n_clusters: int = 2,
+        max_iter: int = 10,
         *,
         init: StochasticQuantizationInit = StochasticQuantizationInit.SAMPLE,
-        tol: np.float64 = 1e-4,
         learning_rate: np.float64 = 0.001,
         rank: np.unsignedinteger = 3,
-        max_iter: np.unsignedinteger = 300,
+        tol: Optional[np.float64] = None,
         random_state: Optional[np.random.RandomState] = None,
-        verbose: np.unsignedinteger = 0,
+        verbose: int = 0,
     ):
         self.loss_history_ = []
         self.n_iter_ = 0
         self.cluster_centers_ = np.array([])
+
         self.optim = optim
         self.n_clusters = n_clusters
+        self.max_iter = max_iter
         self.init = init
-        self.tol = tol
         self.learning_rate = learning_rate
         self.rank = rank
-        self.max_iter = max_iter
+        self.tol = tol
         self.random_state = random_state
         self.verbose = verbose
 
@@ -91,7 +92,10 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
             current_loss = calculate_loss(X, self.cluster_centers_)
 
-            if np.linalg.norm(self.loss_history_[-1] - current_loss, ord=2) < self.tol:
+            if (
+                self.tol is not None
+                and self.loss_history_[-1] - current_loss < self.tol
+            ):
                 break
 
             self.loss_history_.append(current_loss)
