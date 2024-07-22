@@ -51,6 +51,6 @@ experimental evaluations on image and text data reveal significant improvements 
         ],
         install_requires=[
             "numpy>=1.26.4,<2",
-            "scikit-learn=1.5.1,<2",
+            "scikit-learn>=1.5.1,<2",
         ],
     )
