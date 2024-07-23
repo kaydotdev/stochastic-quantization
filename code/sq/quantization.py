@@ -21,9 +21,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
     def __init__(
         self,
         optim: BaseOptimizer,
+        *,
         n_clusters: int = 2,
         max_iter: int = 10,
-        *,
         init: StochasticQuantizationInit = StochasticQuantizationInit.SAMPLE,
         learning_rate: np.float64 = 0.001,
         rank: np.unsignedinteger = 3,
@@ -117,4 +117,8 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
         check_is_fitted(self)
 
-        return find_nearest_element(X, self.cluster_centers_)
+        pairwise_distance = np.linalg.norm(
+            X[:, np.newaxis] - self.cluster_centers_, axis=-1
+        )
+
+        return np.argmin(pairwise_distance, axis=-1)
