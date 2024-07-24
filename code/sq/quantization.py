@@ -87,7 +87,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                     cumulative_probabilities = np.cumsum(pairwise_probabilities)
 
                     next_centroid_index = np.searchsorted(
-                        cumulative_probabilities, np.random.rand()
+                        cumulative_probabilities, random_state.rand()
                     )
                     next_centroid = X[next_centroid_index]
 
