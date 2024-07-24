@@ -13,6 +13,7 @@ from .optim import BaseOptimizer
 class StochasticQuantizationInit(Enum):
     SAMPLE = "SAMPLE"
     RANDOM = "RANDOM"
+    K_MEANS_PLUS_PLUS = "K_MEANS_PLUS_PLUS"
 
 
 class StochasticQuantization(BaseEstimator, ClusterMixin):
@@ -24,7 +25,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         *,
         n_clusters: int = 2,
         max_iter: int = 10,
-        init: StochasticQuantizationInit = StochasticQuantizationInit.SAMPLE,
+        init: StochasticQuantizationInit = StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
         learning_rate: np.float64 = 0.001,
         rank: np.unsignedinteger = 3,
         tol: Optional[np.float64] = None,
@@ -69,6 +70,30 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                 self.cluster_centers_ = X[random_indices]
             case StochasticQuantizationInit.RANDOM:
                 self.cluster_centers_ = random_state.rand(self.n_clusters, X_dims)
+            case StochasticQuantizationInit.K_MEANS_PLUS_PLUS:
+                random_indices = random_state.choice(X_len, size=1, replace=False)
+                self.cluster_centers_ = np.expand_dims(X[random_indices.item()], axis=0)
+
+                for _ in range(1, self.n_clusters):
+                    pairwise_distance = np.min(
+                        np.linalg.norm(
+                            X[:, np.newaxis] - self.cluster_centers_, axis=-1
+                        ),
+                        axis=-1,
+                    )
+                    pairwise_probabilities = pairwise_distance / np.sum(
+                        pairwise_distance
+                    )
+                    cumulative_probabilities = np.cumsum(pairwise_probabilities)
+
+                    next_centroid_index = np.searchsorted(
+                        cumulative_probabilities, np.random.rand()
+                    )
+                    next_centroid = X[next_centroid_index]
+
+                    self.cluster_centers_ = np.vstack(
+                        (self.cluster_centers_, next_centroid)
+                    )
 
         self.n_iter_ = 0
         self.loss_history_ = [calculate_loss(X, self.cluster_centers_)]
