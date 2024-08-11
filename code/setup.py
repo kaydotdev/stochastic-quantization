@@ -4,18 +4,22 @@ from setuptools import setup, find_packages
 if __name__ == "__main__":
     setup(
         name="sq",
-        fullname="Stochastic optimal quantization",
-        description="Deep Embedded Clustering with Stochastic Optimal Quantization",
-        long_description="""The challenge of working with high-dimensional data in unsupervised domains is well-known, 
-particularly due to the 'curse of dimensionality.' As dimensionality increases, the data space volume expands rapidly, 
-leading to sparse distributions and potential model overfitting. To address this issue, Deep Embedded Clustering (DEC) 
-was proposed as a two-stage algorithm. The first stage employs a deep neural network's embedding model to learn low-
-dimensional feature representations in metric space from high-dimensional data (e.g., images, text). The second stage 
-applies clustering algorithms to analyze similarities between these low-dimensional features. However, this approach 
-encounters difficulties in its second stage, where algorithms like K-means are used to solve non-convex optimization 
-problems without robust theoretical convergence guarantees. This paper introduces a stochastic quantization model as 
-an alternative second stage, demonstrating faster and more stable convergence on non-convex optimization problems. Our 
-experimental evaluations on image and text data reveal significant improvements over existing one-stage models.""",
+        fullname="Stochastic Quantization",
+        description="Robust Clustering with Stochastic Quantization",
+        long_description="In this paper, we address the limitations of traditional vector quantization (clustering) "
+        "algorithms, such as KMeans and its variants, which require the eager loading of all data "
+        "points into memory, making them impractical for large datasets. Although variants like "
+        "Mini-Batch KMeans partially mitigate this issue by reducing memory usage, they lack robust "
+        "theoretical convergence guarantees due to the non-convex nature of clustering problems. "
+        "To overcome these challenges, we introduce a stochastic quantization algorithm as a scalable "
+        "alternative with strong theoretical convergence guarantees for solving unsupervised and "
+        "semi-supervised learning problems. We demonstrate the effectiveness and robustness of this "
+        "approach through an image classification task with partially labeled data. To address the "
+        "problem of high dimensionality, we apply a deep embedded clustering technique to encode "
+        "images into low-dimensional representations in a latent space, which we use to compare the "
+        "efficiency of both the proposed and traditional quantization algorithms. Our experimental "
+        "results reveal that the convergence speed of the introduced algorithm is on par with that "
+        "of traditional algorithms.",
         version="1.0.0",
         author="Anton Kozyriev",
         author_email="a.kozyriev@kpi.ua",
@@ -39,15 +43,11 @@ experimental evaluations on image and text data reveal significant improvements 
             "Programming Language :: Python :: 3.10",
         ],
         keywords=[
-            "global stochastic optimization",
+            "stochastic quantization",
+            "clustering algorithms",
             "stochastic gradient descent",
-            "deep embedded clustering",
             "non-convex optimization",
-            "discrete quantization",
-            "discrete clustering",
-            "allocation problem",
-            "deep learning",
-            "similarity learning",
+            "deep embedded clustering",
         ],
         install_requires=[
             "numpy>=1.26.4,<2",
