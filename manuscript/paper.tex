@@ -1,99 +1,25 @@
-%% The first command in your LaTeX source must be the \documentclass command.
+\documentclass[runningheads]{llncs}
 
-\documentclass{ceurart}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
 
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{amsthm}
-\usepackage{todonotes}
-
-%%
-%% One can fix some overfulls
-\sloppy
-
-%%
-%% Minted listings support 
-\usepackage{listings}
-%% auto break lines
-\lstset{breaklines=true}
-
-%%
-%% end of the preamble, start of the body of the document source.
 \begin{document}
+    \title{Robust Clustering on High-Dimensional Data with Stochastic Quantization}
 
-%%
-%% The "title" command
-\title{}
+    \author{Vladimir Norkin\inst{1,2} \and Anton Kozyriev\inst{1}}
+    \authorrunning{Vladimir Norkin et al.}
 
-%%
-%% The "author" command and its associated commands are used to define
-%% the authors and their affiliations.
-\author[1,2]{Vladimir Norkin}[%
-    orcid=0000-0003-3255-0405
-]
-\author[2]{Anton Kozyriev}[%
-    orcid=0009-0007-6692-2162,
-    email=a.kozyriev@kpi.ua
-]
+    \institute{Igor Sikorsky Kyiv Polytechnic Institute, National Technical University of Ukraine, Kyiv, 03056, Ukraine \email{a.kozyriev@kpi.ua} \and
+    V.M.Glushkov Institute of Cybernetics, National Academy of Sciences of Ukraine, Kyiv, 03178, Ukraine}
 
-\address[1]{V.M. Glushkov Institute of Cybernetics of the NAS of Ukraine, Kyiv}
-\address[2]{National Technical University of Ukraine "Igor Sikorsky Kyiv Polytechnic Institute", Kyiv}
+    \maketitle
 
-%%
-%% The abstract is a short summary of the work to be presented in the
-%% article.
-\begin{abstract}
-  Abstract
-\end{abstract}
+    \input{chapters/1_Abstract}
+    \input{chapters/2_Introduction}
 
-%%
-%% Keywords. The author(s) should pick words that accurately describe
-%% the work being presented. Separate the keywords with commas.
-\begin{keywords}
-  keyword 1 \sep
-  keyword 2 \sep
-  keyword 3 \sep
-  keyword 4
-\end{keywords}
-
-%%
-%% This command processes the author and affiliation and title
-%% information and builds the first part of the formatted document.
-\maketitle
-
-\section{Introduction}
-
-\section{Two stage classification}
-
-\section{Deep metric learning}
-
-\subsection{Convolutional neural network}
-
-\subsection{Backpropagation}
-
-\subsection{Triplet loss}
-
-\section{Stochastic quantization}
-
-\subsection{Non-convex problems of stochastic optimization}
-
-\subsection{Transport problem based on KR-distance}
-
-\subsection{Comparison with KMeans}
-
-\subsection{Proposed stochastic quantization}
-
-\subsection{Modifications of the algorithm}
-
-\section{Numerical experiments}
-
-\section{Conclusions}
-
-%%
-%% Define the bibliography file to be used
-\bibliography{references}
-
+    \bibliographystyle{splncs04}
+    \bibliography{references}
 \end{document}
-
-%%
-%% End of file

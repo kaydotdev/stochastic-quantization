@@ -1,281 +1,117 @@
-
-% Journals
-
-% First the Full Name is given, then the abbreviation used in the AMS Math
-% Reviews, with an indication if it could not be found there.
-% Note the 2nd overwrites the 1st, so swap them if you want the full name.
-
- %{AMS}
- @String{AMSTrans = "American Mathematical Society Translations" }
- @String{AMSTrans = "Amer. Math. Soc. Transl." }
- @String{BullAMS = "Bulletin of the American Mathematical Society" }
- @String{BullAMS = "Bull. Amer. Math. Soc." }
- @String{ProcAMS = "Proceedings of the American Mathematical Society" }
- @String{ProcAMS = "Proc. Amer. Math. Soc." }
- @String{TransAMS = "Transactions of the American Mathematical Society" }
- @String{TransAMS = "Trans. Amer. Math. Soc." }
-
- %ACM
- @String{CACM = "Communications of the {ACM}" }
- @String{CACM = "Commun. {ACM}" }
- @String{CompServ = "Comput. Surveys" }
- @String{JACM = "J. ACM" }
- @String{ACMMathSoft = "{ACM} Transactions on Mathematical Software" }
- @String{ACMMathSoft = "{ACM} Trans. Math. Software" }
- @String{SIGNUM = "{ACM} {SIGNUM} Newsletter" }
- @String{SIGNUM = "{ACM} {SIGNUM} Newslett." }
-
- @String{AmerSocio = "American Journal of Sociology" }
- @String{AmerStatAssoc = "Journal of the American Statistical Association" }
- @String{AmerStatAssoc = "J. Amer. Statist. Assoc." }
- @String{ApplMathComp = "Applied Mathematics and Computation" }
- @String{ApplMathComp = "Appl. Math. Comput." }
- @String{AmerMathMonthly = "American Mathematical Monthly" }
- @String{AmerMathMonthly = "Amer. Math. Monthly" }
- @String{BIT = "{BIT}" }
- @String{BritStatPsych = "British Journal of Mathematical and Statistical
-          Psychology" }
- @String{BritStatPsych = "Brit. J. Math. Statist. Psych." }
- @String{CanMathBull = "Canadian Mathematical Bulletin" }
- @String{CanMathBull = "Canad. Math. Bull." }
- @String{CompApplMath = "Journal of Computational and Applied Mathematics" }
- @String{CompApplMath = "J. Comput. Appl. Math." }
- @String{CompPhys = "Journal of Computational Physics" }
- @String{CompPhys = "J. Comput. Phys." }
- @String{CompStruct = "Computers and Structures" }
- @String{CompStruct = "Comput. \& Structures" }
- @String{CompJour = "The Computer Journal" }
- @String{CompJour = "Comput. J." }
- @String{CompSysSci = "Journal of Computer and System Sciences" }
- @String{CompSysSci = "J. Comput. System Sci." }
- @String{Computing = "Computing" }
- @String{ContempMath = "Contemporary Mathematics" }
- @String{ContempMath = "Contemp. Math." }
- @String{Crelle = "Crelle's Journal" }
- @String{GiornaleMath = "Giornale di Mathematiche" }
- @String{GiornaleMath = "Giorn. Mat." } % didn't find in AMS MR., ibid.
-
- %IEEE
- @String{Computer = "{IEEE} Computer" }
- @String{IEEETransComp = "{IEEE} Transactions on Computers" }
- @String{IEEETransComp = "{IEEE} Trans. Comput." }
- @String{IEEETransAC = "{IEEE} Transactions on Automatic Control" }
- @String{IEEETransAC = "{IEEE} Trans. Automat. Control" }
- @String{IEEESpec = "{IEEE} Spectrum" } % didn't find in AMS MR
- @String{ProcIEEE = "Proceedings of the {IEEE}" }
- @String{ProcIEEE = "Proc. {IEEE}" } % didn't find in AMS MR
- @String{IEEETransAeroElec = "{IEEE} Transactions on Aerospace and Electronic
-     Systems" }
- @String{IEEETransAeroElec = "{IEEE} Trans. Aerospace Electron. Systems" }
-
- @String{IMANumerAna = "{IMA} Journal of Numerical Analysis" }
- @String{IMANumerAna = "{IMA} J. Numer. Anal." }
- @String{InfProcLet = "Information Processing Letters" }
- @String{InfProcLet = "Inform. Process. Lett." }
- @String{InstMathApp = "Journal of the Institute of Mathematics and
-     its Applications" }
- @String{InstMathApp = "J. Inst. Math. Appl." }
- @String{IntControl = "International Journal of Control" }
- @String{IntControl = "Internat. J. Control" }
- @String{IntNumerEng = "International Journal for Numerical Methods in
-     Engineering" }
- @String{IntNumerEng = "Internat. J. Numer. Methods Engrg." }
- @String{IntSuper = "International Journal of Supercomputing Applications" }
- @String{IntSuper = "Internat. J. Supercomputing Applic." } % didn't find
-%% in AMS MR
- @String{Kibernetika = "Kibernetika" }
- @String{JResNatBurStand = "Journal of Research of the National Bureau
-     of Standards" }
- @String{JResNatBurStand = "J. Res. Nat. Bur. Standards" }
- @String{LinAlgApp = "Linear Algebra and its Applications" }
- @String{LinAlgApp = "Linear Algebra Appl." }
- @String{MathAnaAppl = "Journal of Mathematical Analysis and Applications" }
- @String{MathAnaAppl = "J. Math. Anal. Appl." }
- @String{MathAnnalen = "Mathematische Annalen" }
- @String{MathAnnalen = "Math. Ann." }
- @String{MathPhys = "Journal of Mathematical Physics" }
- @String{MathPhys = "J. Math. Phys." }
- @String{MathComp = "Mathematics of Computation" }
- @String{MathComp = "Math. Comp." }
- @String{MathScand = "Mathematica Scandinavica" }
- @String{MathScand = "Math. Scand." }
- @String{TablesAidsComp = "Mathematical Tables and Other Aids to Computation" }
- @String{TablesAidsComp = "Math. Tables Aids Comput." }
- @String{NumerMath = "Numerische Mathematik" }
- @String{NumerMath = "Numer. Math." }
- @String{PacificMath = "Pacific Journal of Mathematics" }
- @String{PacificMath = "Pacific J. Math." }
- @String{ParDistComp = "Journal of Parallel and Distributed Computing" }
- @String{ParDistComp = "J. Parallel and Distrib. Comput." } % didn't find
-%% in AMS MR
- @String{ParComputing = "Parallel Computing" }
- @String{ParComputing = "Parallel Comput." }
- @String{PhilMag = "Philosophical Magazine" }
- @String{PhilMag = "Philos. Mag." }
- @String{ProcNAS = "Proceedings of the National Academy of Sciences
-                    of the USA" }
- @String{ProcNAS = "Proc. Nat. Acad. Sci. U. S. A." }
- @String{Psychometrika = "Psychometrika" }
- @String{QuartMath = "Quarterly Journal of Mathematics, Oxford, Series (2)" }
- @String{QuartMath = "Quart. J. Math. Oxford Ser. (2)" }
- @String{QuartApplMath = "Quarterly of Applied Mathematics" }
- @String{QuartApplMath = "Quart. Appl. Math." }
- @String{RevueInstStat = "Review of the International Statisical Institute" }
- @String{RevueInstStat = "Rev. Inst. Internat. Statist." }
-
- %SIAM
- @String{JSIAM = "Journal of the Society for Industrial and Applied
-     Mathematics" }
- @String{JSIAM = "J. Soc. Indust. Appl. Math." }
- @String{JSIAMB = "Journal of the Society for Industrial and Applied
-     Mathematics, Series B, Numerical Analysis" }
- @String{JSIAMB = "J. Soc. Indust. Appl. Math. Ser. B Numer. Anal." }
- @String{SIAMAlgMeth = "{SIAM} Journal on Algebraic and Discrete Methods" }
- @String{SIAMAlgMeth = "{SIAM} J. Algebraic Discrete Methods" }
- @String{SIAMAppMath = "{SIAM} Journal on Applied Mathematics" }
- @String{SIAMAppMath = "{SIAM} J. Appl. Math." }
- @String{SIAMComp = "{SIAM} Journal on Computing" }
- @String{SIAMComp = "{SIAM} J. Comput." }
- @String{SIAMMatrix = "{SIAM} Journal on Matrix Analysis and Applications" }
- @String{SIAMMatrix = "{SIAM} J. Matrix Anal. Appl." }
- @String{SIAMNumAnal = "{SIAM} Journal on Numerical Analysis" }
- @String{SIAMNumAnal = "{SIAM} J. Numer. Anal." }
- @String{SIAMReview = "{SIAM} Review" }
- @String{SIAMReview = "{SIAM} Rev." }
- @String{SIAMSciStat = "{SIAM} Journal on Scientific and Statistical
-     Computing" }
- @String{SIAMSciStat = "{SIAM} J. Sci. Statist. Comput." }
-
- @String{SoftPracExp = "Software Practice and Experience" }
- @String{SoftPracExp = "Software Prac. Experience" } % didn't find in AMS MR
- @String{StatScience = "Statistical Science" }
- @String{StatScience = "Statist. Sci." }
- @String{Techno = "Technometrics" }
- @String{USSRCompMathPhys = "{USSR} Computational Mathematics and Mathematical
-     Physics" }
- @String{USSRCompMathPhys = "{U. S. S. R.} Comput. Math. and Math. Phys." }
- @String{VLSICompSys = "Journal of {VLSI} and Computer Systems" }
- @String{VLSICompSys = "J. {VLSI} Comput. Syst." }
- @String{ZAngewMathMech = "Zeitschrift fur Angewandte Mathematik und
-     Mechanik" }
- @String{ZAngewMathMech = "Z. Angew. Math. Mech." }
- @String{ZAngewMathPhys = "Zeitschrift fur Angewandte Mathematik und Physik" }
- @String{ZAngewMathPhys = "Z. Angew. Math. Phys." }
-
-% Publishers % ================================================= |
-
- @String{Academic = "Academic Press" }
- @String{ACMPress = "{ACM} Press" }
- @String{AdamHilger = "Adam Hilger" }
- @String{AddisonWesley = "Addison-Wesley" }
- @String{AllynBacon = "Allyn and Bacon" }
- @String{AMS = "American Mathematical Society" }
- @String{Birkhauser = "Birkha{\"u}ser" }
- @String{CambridgePress = "Cambridge University Press" }
- @String{Chelsea = "Chelsea" }
- @String{ClaredonPress = "Claredon Press" }
- @String{DoverPub = "Dover Publications" }
- @String{Eyolles = "Eyolles" }
- @String{HoltRinehartWinston = "Holt, Rinehart and Winston" }
- @String{Interscience = "Interscience" }
- @String{JohnsHopkinsPress = "The Johns Hopkins University Press" }
- @String{JohnWileySons = "John Wiley and Sons" }
- @String{Macmillan = "Macmillan" }
- @String{MathWorks = "The Math Works Inc." }
- @String{McGrawHill = "McGraw-Hill" }
- @String{NatBurStd = "National Bureau of Standards" }
- @String{NorthHolland = "North-Holland" }
- @String{OxfordPress = "Oxford University Press" }  %address Oxford or London?
- @String{PergamonPress = "Pergamon Press" }
- @String{PlenumPress = "Plenum Press" }
- @String{PrenticeHall = "Prentice-Hall" }
- @String{SIAMPub = "{SIAM} Publications" }
- @String{Springer = "Springer-Verlag" }
- @String{TexasPress = "University of Texas Press" }
- @String{VanNostrand = "Van Nostrand" }
- @String{WHFreeman = "W. H. Freeman and Co." }
-
-%Entries
-
-@inbook{Bagirov_Karmitsa_Mäkelä_2014,
-	title        = {Nonsmooth Optimization Methods},
-	author       = {Bagirov, Adil and Karmitsa, Napsu and Mäkelä, Marko M.},
-	year         = 2014,
-	booktitle    = {Introduction to nonsmooth optimization: Theory, practice and software},
-	publisher    = {Springer},
-	pages        = {293–297},
-	place        = {Cham, Switzerland},
-}
-
-@inbook{Cornuejols_Tutuncu_2007,
-	title        = {Nonlinear Programming: Theory and Algorithms},
-	author       = {Cornuejols, Gerard and Tutuncu, Reha},
+@inproceedings{Arthur_Vassilvitskii_2007,
+	title        = {k-means++: the advantages of careful seeding},
+	author       = {Arthur, David and Vassilvitskii, Sergei},
 	year         = 2007,
-	booktitle    = {Optimization methods in finance},
-	publisher    = {Cambridge University Press},
-	pages        = {93–99},
+	booktitle    = {Proceedings of the Eighteenth Annual ACM-SIAM Symposium on Discrete Algorithms},
+	location     = {New Orleans, Louisiana},
+	publisher    = {Society for Industrial and Applied Mathematics},
+	address      = {USA},
+	series       = {SODA '07},
+	pages        = {1027–1035},
+	isbn         = 9780898716245,
+	abstract     = {The k-means method is a widely used clustering technique that seeks to minimize the average squared distance between points in the same cluster. Although it offers no accuracy guarantees, its simplicity and speed are very appealing in practice. By augmenting k-means with a very simple, randomized seeding technique, we obtain an algorithm that is Θ(logk)-competitive with the optimal clustering. Preliminary experiments show that our augmentation improves both the speed and the accuracy of k-means, often quite dramatically.},
+	numpages     = 9,
 }
 
-@article{Ermoliev_Norkin_Wets_1995,
-	title        = {The minimization of semicontinuous functions: Mollifier subgradients},
-	author       = {Ermoliev, Yuri M. and Norkin, Vladimir I. and Wets, Roger J-B.},
-	year         = 1995,
-	journal      = {SIAM Journal on Control and Optimization},
-	volume       = 33,
-	number       = 1,
-	pages        = {149–167},
-	doi          = {10.1137/s0363012992238369},
+@inproceedings{Bottou_1994,
+	title        = {Convergence Properties of the K-Means Algorithms},
+	author       = {L'eon Bottou and Yoshua Bengio},
+	year         = 1994,
+	booktitle    = {Advances in Neural Information Processing Systems 7, {[NIPS} Conference, Denver, Colorado, USA, 1994]},
+	publisher    = {{MIT} Press},
+	pages        = {585--592},
+	editor       = {Gerald Tesauro and David S. Touretzky and Todd K. Leen},
 }
 
-@article{Gupal_Norkin_1977,
-	title        = {Algorithm for the minimization of discontinuous functions},
-	author       = {Gupal, A. M. and Norkin, V. I.},
-	year         = 1977,
-	journal      = {Cybernetics},
-	volume       = 13,
+@article{Bottou_2010,
+	title        = {Large-scale machine learning with stochastic gradient descent},
+	author       = {Bottou, Léon},
+	year         = 2010,
+	journal      = {Proceedings of COMPSTAT’2010},
+	pages        = {177–186},
+	doi          = {10.1007/978-3-7908-2604-3},
+}
+
+@inproceedings{Chinchor_1992,
+	title        = {MUC-4 evaluation metrics},
+	author       = {Chinchor, Nancy},
+	year         = 1992,
+	booktitle    = {Proceedings of the 4th Conference on Message Understanding},
+	location     = {McLean, Virginia},
+	publisher    = {Association for Computational Linguistics},
+	address      = {USA},
+	series       = {MUC4 '92},
+	pages        = {22–29},
+	doi          = {10.3115/1072064.1072067},
+	isbn         = 1558602739,
+	abstract     = {The MUC-4 evaluation metrics measure the performance of the message understanding systems. This paper describes the scoring algorithms used to arrive at the metrics as well as the improvements that were made to the MUC-3 methods. MUC-4 evaluation metrics were stricter than those used in MUC-3. Given the differences in scoring between MUC-3 and MUC-4, the MUC-4 systems' scores represent a larger improvement over MUC-3 performance than the numbers themselves suggest.},
+	numpages     = 8,
+}
+
+@article{Duchi_Hazan_Singer_2011,
+	title        = {Adaptive Subgradient Methods for Online Learning and Stochastic Optimization},
+	author       = {Duchi, John and Hazan, Elad and Singer, Yoram},
+	year         = 2011,
+	month        = {07},
+	journal      = {Journal of Machine Learning Research},
+	volume       = 12,
+	pages        = {2121--2159},
+}
+
+@article{Ermolev_Norkin_1998,
+	title        = {Stochastic generalized gradient method for nonconvex nonsmooth stochastic optimization},
+	author       = {Ermol’ev, Yu. M. and Norkin, V. I.},
+	year         = 1998,
+	month        = {Mar},
+	journal      = {Cybernetics and Systems Analysis},
+	volume       = 34,
 	number       = 2,
-	pages        = {220–223},
-	doi          = {10.1007/bf01073313},
+	pages        = {196–215},
+	doi          = {10.1007/bf02742069},
 }
 
-@article{Kuzmenko_Uryasev_2019,
-	title        = {Kantorovich–Rubinstein Distance Minimization: Application to location problems},
-	author       = {Kuzmenko, Viktor and Uryasev, Stan},
-	year         = 2019,
-	month        = sep,
-	journal      = {Springer Optimization and Its Applications},
-	volume       = 149,
-	pages        = {59–68},
-	doi          = {10.1007/978-3-030-22788-3_3},
+@article{Ermoliev_Norkin_2003,
+	title        = {Solution of nonconvex nonsmooth stochastic optimization problems},
+	author       = {Ermoliev, Yu. M. and Norkin, V. I.},
+	year         = 2003,
+	month        = {Sep},
+	journal      = {Cybernetics and Systems Analysis},
+	volume       = 39,
+	number       = 5,
+	pages        = {701–715},
+	doi          = {10.1023/b:casa.0000012091.84864.65},
 }
 
-@article{Norkin_2020,
-	title        = {A stochastic smoothing method for nonsmooth global optimization},
-	author       = {Norkin, Vladimir},
-	year         = 2020,
-	journal      = {Cybernetics and Computer Technologies},
-	volume       = 1,
+@book{ermoliev1976stochastic,
+	title        = {Stochastic Programming Methods},
+	author       = {Ermoliev, Y.},
+	year         = 1976,
+	publisher    = {Nauka},
+	address      = {Moscow},
+}
+
+@article{Gandikota_Kane_Maity_Mazumdar_2022,
+	title        = {VqSGD: Vector quantized stochastic gradient descent},
+	author       = {Gandikota, Venkata and Kane, Daniel and Maity, Raj Kumar and Mazumdar, Arya},
+	year         = 2022,
+	month        = {Jul},
+	journal      = {IEEE Transactions on Information Theory},
+	volume       = 68,
+	number       = 7,
+	pages        = {4573–4587},
+	doi          = {10.1109/tit.2022.3161620},
+}
+
+@article{Graf_Luschgy_2000,
+	title        = {Foundations of quantization for probability distributions},
+	author       = {Graf, Siegfried and Luschgy, Harald},
+	year         = 2000,
+	journal      = {Lecture Notes in Mathematics},
+	series       = 7,
+	volume       = 1730,
 	number       = 1,
-	pages        = {5–14},
-	doi          = {10.34229/2707-451x.20.1.1},
-}
-
-@article{Schmidt-Hieber_2020,
-	title        = {Nonparametric regression using deep neural networks with ReLU activation function},
-	author       = {Schmidt-Hieber, Johannes},
-	year         = 2020,
-	journal      = {The Annals of Statistics},
-	volume       = 48,
-	number       = 4,
-	doi          = {10.1214/19-aos1875},
-}
-
-@article{Shor_1985,
-	title        = {Minimization methods for non-differentiable functions},
-	author       = {Shor, Naum Zuselevich},
-	year         = 1985,
-	journal      = {Springer Series in Computational Mathematics},
-	doi          = {10.1007/978-3-642-82118-9},
+	doi          = {10.1007/bfb0103945},
+	collection   = 7,
 }
 
 @inproceedings{Hoffer_2015,
@@ -291,18 +127,103 @@
 	abstract     = {Deep learning has proven itself as a successful set of models for learning useful semantic representations of data. These, however, are mostly implicitly learned as part of a classification task. In this paper we propose the triplet network model, which aims to learn useful representations by distance comparisons. A similar model was defined by Wang et al. (2014), tailor made for learning a ranking for image information retrieval. Here we demonstrate using various datasets that our model learns a better representation than that of its immediate competitor, the Siamese network. We also discuss future possible usage as a framework for unsupervised learning.},
 }
 
-@book{Shapiro_Dentcheva_Ruszczyński_2009,
-	title        = {Lectures on Stochastic Programming},
-	author       = {Shapiro, Alexander and Dentcheva, Darinka and Ruszczyński, Andrzej},
+@article{Jain_2010,
+	title        = {Data clustering: 50 years beyond K-means},
+	author       = {Jain, Anil K.},
+	year         = 2010,
+	month        = {Jun},
+	journal      = {Pattern Recognition Letters},
+	volume       = 31,
+	number       = 8,
+	pages        = {651–666},
+	doi          = {10.1016/j.patrec.2009.09.011},
+}
+
+@article{kiefer1952stochastic,
+	title        = {Stochastic estimation of the maximum of a regression function},
+	author       = {Kiefer, Jack and Wolfowitz, Jacob},
+	year         = 1952,
+	journal      = {The Annals of Mathematical Statistics},
+	publisher    = {JSTOR},
+	pages        = {462--466},
+}
+
+@misc{kingma2017adam,
+	title        = {Adam: A Method for Stochastic Optimization},
+	author       = {Diederik P. Kingma and Jimmy Ba},
+	year         = 2017,
+	eprint       = {1412.6980},
+	archiveprefix = {arXiv},
+	primaryclass = {cs.LG},
+}
+
+@article{Kriegel_Kröger_Zimek_2009,
+	title        = {Clustering high-dimensional data},
+	author       = {Kriegel, Hans-Peter and Kröger, Peer and Zimek, Arthur},
 	year         = 2009,
-	publisher    = {Society for Industrial and Applied Mathematics},
-	doi          = {10.1137/1.9780898718751},
-	url          = {https://epubs.siam.org/doi/abs/10.1137/1.9780898718751},
-	eprint       = {https://epubs.siam.org/doi/pdf/10.1137/1.9780898718751},
+	month        = {Mar},
+	journal      = {ACM Transactions on Knowledge Discovery from Data},
+	volume       = 3,
+	number       = 1,
+	pages        = {1–58},
+	doi          = {10.1145/1497577.1497578},
+}
+
+@article{Kuzmenko_Uryasev_2019,
+	title        = {Kantorovich–Rubinstein Distance Minimization: Application to location problems},
+	author       = {Kuzmenko, Viktor and Uryasev, Stan},
+	year         = 2019,
+	month        = sep,
+	journal      = {Springer Optimization and Its Applications},
+	volume       = 149,
+	pages        = {59–68},
+	doi          = {10.1007/978-3-030-22788-3\_3},
+}
+
+@article{Lakshmanan_Pichler_2023,
+	title        = {Soft quantization using entropic regularization},
+	author       = {Lakshmanan, Rajmadan and Pichler, Alois},
+	year         = 2023,
+	month        = {Oct},
+	journal      = {Entropy},
+	volume       = 25,
+	number       = 10,
+	pages        = 1435,
+	doi          = {10.3390/e25101435},
+}
+
+@article{lecun2010mnist,
+	title        = {MNIST handwritten digit database},
+	author       = {LeCun, Yann and Cortes, Corinna and Burges, CJ},
+	year         = 2010,
+	journal      = {ATT Labs [Online]. Available: http://yann.lecun.com/exdb/mnist},
+	volume       = 2,
+}
+
+@article{Lloyd_1982,
+	title        = {Least squares quantization in PCM},
+	author       = {Lloyd, S.},
+	year         = 1982,
+	month        = {Mar},
+	journal      = {IEEE Transactions on Information Theory},
+	volume       = 28,
+	number       = 2,
+	pages        = {129–137},
+	doi          = {10.1109/tit.1982.1056489},
+}
+
+@misc{mikhalevich2024,
+	title        = {Methods of Nonconvex Optimization},
+	author       = {V. S. Mikhalevich and A. M. Gupal and V. I. Norkin},
+	year         = 2024,
+	url          = {https://arxiv.org/abs/2406.10406},
+	eprint       = {2406.10406},
+	archiveprefix = {arXiv},
+	primaryclass = {math.OC},
 }
 
 @inproceedings{nesterov1983method,
-	title        = {A method of solving a convex programming problem with convergence rate {$O\bigl(\frac1{k^2}\bigr)$}},
+	title        = {A method of solving a convex programming problem with convergence rate {$O(1/k^2)$}},
 	author       = {Nesterov, Yurii Evgen'evich},
 	year         = 1983,
 	booktitle    = {Doklady Akademii Nauk},
@@ -311,53 +232,146 @@
 	organization = {Russian Academy of Sciences},
 }
 
-@article{Krakovsky_2011,
-	title        = {Neural network approach to multidimensional data classification via clustering},
-	author       = {Krakovsky, Roman and Forgac, Radoslav},
-	year         = 2011,
-	month        = {09},
-	journal      = {SISY 2011 - 9th International Symposium on Intelligent Systems and Informatics, Proceedings},
-	doi          = {10.1109/SISY.2011.6034316},
+@article{Newton_Yousefian_Pasupathy_2018,
+	title        = {Stochastic gradient descent: Recent trends},
+	author       = {Newton, David and Yousefian, Farzad and Pasupathy, Raghu},
+	year         = 2018,
+	month        = {Oct},
+	journal      = {Recent Advances in Optimization and Modeling of Contemporary Problems},
+	pages        = {193–220},
+	doi          = {10.1287/educ.2018.0191},
 }
 
-@inproceedings{NIPS2016_6b180037,
-	title        = {Improved Deep Metric Learning with Multi-class N-pair Loss Objective},
-	author       = {Sohn, Kihyuk},
-	year         = 2016,
-	booktitle    = {Advances in Neural Information Processing Systems},
-	publisher    = {Curran Associates, Inc.},
-	volume       = 29,
-	url          = {https://proceedings.neurips.cc/paper_files/paper/2016/file/6b180037abbebea991d8b1232f8a8ca9-Paper.pdf},
-	editor       = {D. Lee and M. Sugiyama and U. Luxburg and I. Guyon and R. Garnett},
+@article{Nguyen_Duong_2018,
+	title        = {K-means** - a fast and efficient K-means algorithms},
+	author       = {Nguyen, Cuong Duc and Duong, Trong Hai},
+	year         = 2018,
+	journal      = {International Journal of Intelligent Information and Database Systems},
+	volume       = 11,
+	number       = 1,
+	pages        = 27,
+	doi          = {10.1504/ijiids.2018.091595},
 }
 
-@article{Polyak_1964,
-	title        = {Some methods of speeding up the convergence of iteration methods},
-	author       = {Polyak, B.T.},
-	year         = 1964,
-	journal      = {USSR Computational Mathematics and Mathematical Physics},
-	volume       = 4,
-	number       = 5,
-	pages        = {1–17},
-	doi          = {10.1016/0041-5553(64)90137-5},
+@article{Norkin_1986,
+	title        = {Stochastic generalized-differentiable functions in the problem of nonconvex nonsmooth stochastic optimization},
+	author       = {Norkin, V. I.},
+	year         = 1986,
+	journal      = {Cybernetics},
+	volume       = 22,
+	number       = 6,
+	pages        = {804–809},
+	doi          = {10.1007/bf01068698},
 }
 
-@book{ermoliev1976stochastic,
-	title        = {Stochastic Programming Methods},
-	author       = {Ermoliev, Y.},
-	year         = 1976,
-	publisher    = {Nauka},
-	address      = {Moscow},
+@article{Norkin_Kozyriev_Norkin_2024,
+	title        = {Modern stochastic quasi-gradient optimization algorithms},
+	author       = {Norkin, Vladimir and Kozyriev, Anton and Norkin, Bogdan},
+	year         = 2024,
+	month        = {Mar.},
+	journal      = {International Scientific Technical Journal "Problems of Control and Informatics"},
+	volume       = 69,
+	number       = 2,
+	pages        = {71–83},
+	doi          = {10.34229/1028-0979-2024-2-6},
+	url          = {https://jais.net.ua/index.php/files/article/view/228},
+	abstractnote = {&amp;lt;p&amp;gt;Stochastic optimization has become a leading method in various fields such as machine learning, neural networks training, and signal processing. These problems are aimed at minimizing the objective function with noisy and uncertain data. Such problems are attributed to stochastic programming. The article comprehensively compares modern quasi-gradient methods of stochastic optimization, illustrates their basic principles, convergence properties, and practical applications. First, basic concepts of gradient descent, stochastic approximation and optimization are introduced, and then optimization methods are explained in detail. Extensions of the basic gradient descent such as Nemirovski’s mirror decent, Polyak’s heavy ball (momentum) and Nesterov’s valley step methods are reviewed. Beside these classical methods, adaptive stochastic gradient methods are analyzed in depth; attention is focused on their ability to dynamically change the learning rate and decent directions depending on the structure of the problem and a course of optimization. The nomenclature of adaptive stochastic gradient methods includes AdaGrad, RMSProp, ADAM. Generalizations of these methods to the case of non-smooth objective function are studied; problems arising in non-smooth optimization landscapes are described. These generalizations exploit the idea of smoothing coming back to Steklov (1907) and consist in approximation of the original objective function by a sequence of close smoothed functions. The latter admit approximation of their gradients in the form of finite differences in random directions. The application of these improved methods in the context of unconditional optimization problems is illustrated and their effectiveness in accelerating convergence and increasing accuracy is demonstrated. In particular, our experiments demonstrate a considerable positive effect of smoothing on the behavior of the methods in case of nonsmooth problems. This benchmarking study aims to provide researchers and practitioners with a deeper understanding of recent advances in stochastic optimization and outline a path for future innovation.&amp;lt;/p&amp;gt;},
 }
 
-@misc{kingma2017adammethodstochasticoptimization,
-	title        = {Adam: A Method for Stochastic Optimization},
-	author       = {Diederik P. Kingma and Jimmy Ba},
+@article{Norkin_Onishchenko_2005,
+	title        = {Minorant methods of stochastic global optimization},
+	author       = {Norkin, V. I. and Onishchenko, B. O.},
+	year         = 2005,
+	month        = {Mar},
+	journal      = {Cybernetics and Systems Analysis},
+	volume       = 41,
+	number       = 2,
+	pages        = {203–214},
+	doi          = {10.1007/s10559-005-0053-4},
+}
+
+@article{Norkin_Pflug_Ruszczynski_1998,
+	title        = {A branch and bound method for stochastic global optimization},
+	author       = {Norkin, Vladimir I. and Pflug, Georg Ch. and Ruszczyński, Andrzej},
+	year         = 1998,
+	month        = {Jan},
+	journal      = {Mathematical Programming},
+	volume       = 83,
+	number       = {1–3},
+	pages        = {425–450},
+	doi          = {10.1007/bf02680569},
+}
+
+@inbook{Poliak_1987,
+	title        = {The Heavy Ball Method},
+	author       = {Poliak, Boris Teodorovich},
+	year         = 1987,
+	booktitle    = {Introduction to optimization},
+	publisher    = {Optimization Software},
+	pages        = {65–68},
+	place        = {New York},
+}
+
+@article{Radomirovic_2023,
+	title        = {Text document clustering approach by improved sine cosine algorithm},
+	author       = {Radomirovi\'{c}, Branislav and Jovanovi\'{c}, Vuk and Nikoli\'{c}, Bosko and Stojanovi\'{c}, Sasa and Venkatachalam, K. and Zivkovic, Miodrag and Njegu\v{s}, Angelina and Bacanin, Nebojsa and Strumberger, Ivana},
+	year         = 2023,
+	month        = jul,
+	journal      = {Information Technology and Control},
+	volume       = 52,
+	number       = 2,
+	pages        = {541--561},
+	doi          = {10.5755/j01.itc.52.2.33536},
+}
+
+@article{Robbins_Monro_1951,
+	title        = {A stochastic approximation method},
+	author       = {Robbins, Herbert and Monro, Sutton},
+	year         = 1951,
+	journal      = {The Annals of Mathematical Statistics},
+	publisher    = {JSTOR},
+	volume       = 22,
+	number       = 3,
+	pages        = {400–407},
+	doi          = {10.1214/aoms/1177729586},
+}
+
+@book{Scholkopf_Smola_2002,
+	title        = {Learning with Kernels: Support Vector Machines, Regularization, Optimization, and Beyond},
+	author       = {Sch\"olkopf, Bernhard and Smola, Alexander J.},
+	year         = 2002,
+	publisher    = {MIT Press},
+	place        = {Cambridge, Massachusetts},
+}
+
+@article{Sculley_2010,
+	title        = {Web-scale K-means clustering},
+	author       = {Sculley, D.},
+	year         = 2010,
+	month        = {Apr},
+	journal      = {Proceedings of the 19th international conference on World wide web},
+	pages        = {1177–1178},
+	doi          = {10.1145/1772690.1772862},
+}
+
+@inproceedings{Tang_2017,
+	title        = {Convergence rate of stochastic k-means},
+	author       = {Tang, Cheng and Monteleoni, Claire},
 	year         = 2017,
-	url          = {https://arxiv.org/abs/1412.6980},
-	eprint       = {1412.6980},
-	archiveprefix = {arXiv},
-	primaryclass = {cs.LG},
+	month        = {20--22 Apr},
+	booktitle    = {Proceedings of the 20th International Conference on Artificial Intelligence and Statistics},
+	series       = {Proceedings of Machine Learning Research},
+	volume       = 54,
+	pages        = {1495--1503},
+	editor       = {Singh, Aarti and Zhu, Jerry},
+}
+
+@article{tieleman2012rmsprop,
+	title        = {Rmsprop: Divide the gradient by a running average of its recent magnitude. coursera: Neural networks for machine learning},
+	author       = {Tieleman, Tijmen and Hinton, Geoffrey},
+	year         = 2012,
+	journal      = {COURSERA Neural Networks Mach. Learn},
+	volume       = 17,
 }
 
 @article{walkington_2023,
@@ -371,3 +385,42 @@
 	doi          = {10.1137/21M1390037},
 }
 
+@article{Wan_2019,
+	title        = {Application of K-means algorithm in image compression},
+	author       = {Wan, Xing},
+	year         = 2019,
+	month        = {Jul},
+	journal      = {IOP Conference Series: Materials Science and Engineering},
+	volume       = 563,
+	number       = 5,
+	doi          = {10.1088/1757-899x/563/5/052042},
+}
+
+@article{Wang_Wei_2020,
+	title        = {Research on logistics center location-allocation problem based on two-stage K-means algorithms},
+	author       = {Wang, Meng and Wei, Xuejiang},
+	year         = 2020,
+	month        = {Aug},
+	journal      = {Advances in Intelligent Systems and Computing},
+	pages        = {52–62},
+	doi          = {10.1007/978-3-030-55506-1\_5},
+}
+
+@inproceedings{Widodo_2011,
+	title        = {Clustering patent document in the field of ICT (Information \& Communication Technology)},
+	author       = {Widodo, Agus and Budi, Indra},
+	year         = 2011,
+	booktitle    = {2011 International Conference on Semantic Technology and Information Retrieval},
+	pages        = {203--208},
+	doi          = {10.1109/STAIR.2011.5995789},
+	keywords     = {Patents;Clustering algorithms;Abstracts;Indexing;Matrix decomposition;Singular value decomposition;Clustering;Patent;Singular Value Decomposition;Kmeans;Information & Communication Technology},
+}
+
+@article{Zhao_Lan_Chen_Ngo_2021,
+	title        = {K-sums clustering},
+	author       = {Zhao, Wan-Lei and Lan, Shi-Ying and Chen, Run-Qing and Ngo, Chong-Wah},
+	year         = 2021,
+	month        = {Oct},
+	journal      = {Proceedings of the 30th ACM International Conference on Information \& Knowledge Management},
+	doi          = {10.1145/3459637.3482359},
+}
