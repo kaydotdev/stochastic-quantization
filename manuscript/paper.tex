@@ -1,10 +1,14 @@
 \documentclass[runningheads]{llncs}
 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{microtype}
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
+
+\renewcommand{\qed}{\hfill\blacksquare}
 
 \begin{document}
     \title{Robust Clustering on High-Dimensional Data with Stochastic Quantization}
@@ -19,6 +23,8 @@
 
     \input{chapters/1_Abstract}
     \input{chapters/2_Introduction}
+    \input{chapters/3_Stochastic_Quantization}
+    \input{chapters/4_Traditional_Clustering_Model}
 
     \bibliographystyle{splncs04}
     \bibliography{references}

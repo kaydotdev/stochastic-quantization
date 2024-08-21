@@ -1,0 +1,125 @@
+\section{Stochastic Quantization}
+
+Unlike most of traditional clustering methods, that search optimal value by minimizing distance from each element of $ \Xi = \{ \xi_i, \> i = 1, \ldots, I \} $ to the nearest center $ Y = \{ y_k, \> k = 1, \ldots, K \} $, stochastic quantization considers feature set $ \Xi $ and cluster centers $ Y $ as two discrete probability distributions. The Wasserstein (or Kantorovich–Rubinstein) distance minimizes distortion between probability distributions when representing a compact distribution by a discrete one \cite{Kuzmenko_Uryasev_2019,Lakshmanan_Pichler_2023}. In following researches \cite{Kuzmenko_Uryasev_2019,Norkin_Onishchenko_2005} authors explored a case of using quantization algorithms to solve optimal allocation problem of service centers, with each atom of discrete distribution representing location of facilities and customers respectively.
+
+\begin{definition}
+    \label{Stochastic Quantization} \cite{Kuzmenko_Uryasev_2019}. The optimal quantization minimizes the weighted sum of distances between elements of feature set $ \{ \xi_i \} \subset \mathbb{R}^{n} $ and centers $ \{ y_k \} \subset \mathbb{R}^{n} $:
+
+    \begin{equation}
+        \label{sq-objective-fn:eq}
+            \min_{y = \{ y_1, \ldots, y_K \} \in Y^K \subset \mathbb{R}^{nK}} \min_{q = \{ q_1, \ldots, q_K \} \in \mathbb{R}^K_{+}} \min_{x = \{ x_{ij} \geq 0 \}} \sum_{i=1}^I \sum_{k=1}^K d(\xi_i, y_k)^r x_{ik}
+    \end{equation}
+
+    with constraints
+
+    \begin{equation}
+        \label{sq-objective-constraints:eq}
+            \sum_{k=1}^K x_{ik} = p_i, \> \sum_{k=1}^K q_k = 1, \> i = 1, \ldots, I
+    \end{equation}
+
+    \noindent where $ p_i > 0, \sum_{i=1}^I p_i = 1 $ - normalized supply volumes, $ x_{ik} $ - transportation volumes, $ d(\xi_i, y_k)_p = || \xi_i - y_k ||_p = (\sum_{j=1}^n | \xi_{ij} - y_{kj} |^p)^{\frac{1}{p}} $ - an $ l_p $ norm is used to define the distance between elements in the objective function (\ref{sq-objective-fn:eq}), $ Y \subset \mathbb{R}^{n} $ - a common constraint set for variables $ \{ y_k, k = 1, \ldots, K \} $, $ n, I, K \in \mathbb{N} $.
+\end{definition}
+
+In this research we used as a distance metric the Euclidean norm ($ p = 2 $), defined as $ d(\xi_i, y_k)_2 = \sqrt{\sum_{j=1}^n | \xi_{ij} - y_{kj} |^2} $. The selection of distance metric may vary depending on the problem. The cosine similarity function $ d(\xi_i, y_j)_{\text{cos}} = \cos(\xi_i, y_j) = \frac{\xi_i \cdot y_j}{|| \xi_i || \cdot || y_j ||} $ is used as a distance metric in the text similarity tasks \cite{Babic_2020,vor_der_bruck_pouly_2019}, while for probability and risk theory problems we can employ Kolmogorov, Levy metrics \cite{Kuzmenko_Uryasev_2019}.
+
+It is clear that in the optimal plan all the mass at point $ \xi_i $ is transported to the nearest point $ y_k $. Thus problem (\ref{sq-objective-fn:eq})-(\ref{sq-objective-constraints:eq}) is reduced to the following non-convex non-smooth global stochastic optimization problem, with the objective function defined as:
+
+\begin{equation}
+    \label{global-sq-objective-fn:eq}
+        \min_{y = \{ y_1, \ldots, y_K \} \in Y^K \subset \mathbb{R}^{nK}} F(y_1, \ldots, y_k)
+\end{equation}
+
+\noindent where
+
+\begin{equation}
+    \label{global-sq-fn-expansion:eq}
+        F(y) = F(y_1, \ldots, y_k) = \sum_{i=1}^I p_i \min_{1 \leq k \leq K} d(\xi_i, y_k)^r = \mathbb{E}_{i \sim p} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r
+\end{equation}
+
+Here $ \mathbb{E}_{i \sim p} $ is the expected value (or the mean value) over random index $ i $ that takes values $ \{ 1, \ldots, I \} $ with probabilities $ \{ p_1, \ldots, p_I \} $, respectively.
+
+\begin{lemma}
+    \label{Lemma 1} In the global optimum $ y^{*} = (y_1^{*}, \ldots, y_K^{*}) $ of (\ref{sq-objective-constraints:eq}) all $ \{ y_1^{*}, \ldots, y_K^{*} \} $ belong to the convex hull of elements $ \{ \xi_1, \ldots, \xi_I \} $ in the feature est.
+\end{lemma}
+\begin{proof}
+    Suppose the opposite, where there are some $ y_{k^*}^* \notin \text{conv} \{ \xi_1, \ldots, \xi_I \} $. Consider projection of $ \bar{y}_{k^*}^* $ on $ \text{conv} \{ \xi_1, \ldots, \xi_I \} $ and points $ y_{k^*}^* (t) = (1 - t) y_{k^*}^* + t y_{k^*}^* $, $ t \in [0, 1] $. Let us highlight the following property of the projection $ \forall \xi_i, t \in (0, 1]:  || y_{k^*}^* (t) - \xi_i || < || y_{k^*}^* - \xi_i || $. If $ || y_{k^*}^* - \xi_{i^*} || = \min_{1 \leq k \leq K} || y_k^* - \xi_{i^*} || $ for some $ i^* $, then
+
+    \begin{equation}
+        \min \{ || y_{k^*}^* (t) - \xi_{i^*} ||, \min_{k \notin k^*} || y_k^* - \xi_{i^*} || \} < \min_k || y_k^* - \xi_{i^*} ||
+    \end{equation}
+
+    \noindent and thus $ y^{*} = (y_1^{*}, \ldots, y_K^{*}) $ is not a local minimum of the objective function (\ref{global-sq-fn-expansion:eq}). Now we consider the case $ || y_{k^*}^* - \xi_i || > \min_k || y_k^* - \xi_i || $ for all $ i $. By assumption, $ \min_k || y_k^* - \xi_{i'} || $ for some $ i' $. The vector $ y' = (y_1^{*}, \ldots, y_{k^* - 1}^*, \xi_{i'}, y_{k^* + 1}^*, \ldots, y_K^{*}) $ we constructed, satisfies the inequality $ F(y') < F(y^*) $, i.e., the element $ y^{*} $ is not a minimum, which is a contradiction. The proof is complete. $ \qed $.
+\end{proof}
+
+If a probability distribution $ \Xi $ is continuous, we can interpret the objective function (\ref{global-sq-objective-fn:eq}) an unconstrained smooth stochastic optimization problem \cite{ermoliev1976stochastic,Newton_Yousefian_Pasupathy_2018,Norkin_Kozyriev_Norkin_2024}:
+
+\begin{equation}
+    \label{smooth-stoch-opt-problem:eq}
+        \min_{y = \{ y_1, \ldots, y_K \} \in Y^K \subset \mathbb{R}^{nK}} F(y_1, \ldots, y_k) = \mathbb{E} \tilde{F}(y, \xi) = \int_{\xi \in \Xi} \tilde{F}(y, \xi) P(d \xi)
+\end{equation}
+
+With the assumption, that the objective function $ F(y) $ in (\ref{smooth-stoch-opt-problem:eq}) is differentiable and bounded from below, i.e., $ \inf_{y \in Y} F(y) > - \infty $, we get the continuous representation of (\ref{global-sq-fn-expansion:eq}):
+
+\begin{equation}
+    \label{smooth-stoch-fn-expansion:eq}
+        F(y) = F(y_1, \ldots, y_k) = \mathbb{E}_{\xi} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r = \int \min_{1 \leq k \leq K} d(\xi_i, y_k)^r P(d \xi)
+\end{equation}
+
+\noindent where the random variable $ \xi $ may have some multimodal continuous distribution. The empirical approximation of is:
+
+\begin{equation}
+    \label{empirical-stoch-fn-expansion:eq}
+        F_N(y) = \frac{1}{N} \sum_{i=1}^N \min_{1 \leq k \leq K} d(\xi_i, y_k)^r
+\end{equation}
+
+\noindent where $ \{ \xi_i, \> i = 1, \ldots, N \} $ are independent identically distributed realization of random variable $ \xi $. If $ K = 1 $ and $ Y $ is convex, then problem (\ref{global-sq-objective-fn:eq}) is unimodal and is reduced to convex stochastic optimization problem:
+
+\begin{equation}
+    \label{convex-stoch-opt-problem:eq}
+        \min_{y \in Y} [ F(y) =  \mathbb{E}_{\tilde{i} \sim p} d(\xi_{\tilde{i}}, y) ]
+\end{equation}
+
+On the other hand, the function $ f(\xi_i, y) = \min_{1 \leq k \leq K} d(\xi_i, y_k), y = (y_1, \ldots, y_k) $ is non-smooth and non-convex for $ K \geq 2 $. In terms of \cite{mikhalevich2024,Norkin_1986} if $ f(\xi, y) $ is a random generalized differentiable function, its generalized gradient set can be calculated by the chain rule:
+
+\begin{eqnarray}
+    \label{sq-objective-fn-gradient:eq}
+        \partial f(\xi, y) &=& \text{conv} \{ (0, \ldots, 0, g_{k^*}, 0, \ldots, 0), \> k^* \in S(\xi, y), \> 0 \in \mathbb{R}^n \} \nonumber \\
+        S(\xi, y) &=& \{ k^*: || \xi - y_{k^*} || = \min_{1 \leq k \leq K} || \xi - y_k || \} \nonumber \\
+        g_{k^*} &=& r || \xi - y_{k^*} ||^{r - 2} (y_{k^*} - \xi)
+\end{eqnarray}
+
+The expected value function (\ref{global-sq-fn-expansion:eq}) is also a generalized differentiable one and the set $ \mathbb{E}_{\xi} \partial f(\xi, y) $ is a generalized gradient set of the function \cite{mikhalevich2024,Norkin_1986}. Vectors $ g(\xi) = (0, \ldots, 0, g_{k}, 0, \ldots, 0), k \in S(\xi, y), 0 \in \mathbb{R}^n $ are stochastic generalized gradients of the function $ F(y_1, \ldots, y_K) $.
+
+\begin{algorithm}
+    \caption{Stochastic Quantization}\label{sq:alg}
+    \begin{algorithmic}
+    \Require $ \{ \xi_i, \> i = 1, \ldots, I \}, \rho, K, T, r $
+    \State $ y_0 = \{ y_k, \> k = 1, \ldots, K \} $ \Comment{Initialize centers}
+    \For{$ t \in [0, T - 1] $}
+        \State $ \tilde{\xi} \in \{ \xi_i, \> i = 1, \ldots, I \} $ \Comment{Sample element from feature set}
+        \State $ y_{k_t}, k_t = S(\tilde{\xi}, y_t) $ \Comment{Find the nearest center}
+        \State $ g_{k_t} = r || \tilde{\xi} - y_{k_t} ||^{r - 2} (y_{k_t} - \tilde{\xi}) $ \Comment{Calculate gradient}
+        \State $ y_{k_t} := \pi_Y (y_{k_t} - \rho g_{k_t}) $ \Comment{Update nearest center}
+    \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
+We can use these gradients to find optimal element $ y_{k^*} $ in a feature set $ \Xi $ using Stochastic Gradient Descent (SGD) \cite{ermoliev1976stochastic,kiefer1952stochastic,Robbins_Monro_1951,Norkin_Kozyriev_Norkin_2024}:
+
+\begin{equation}
+    \label{sgd-update-rule:eq}
+        y_{k+1} = \pi_Y (y_k - \rho_k g_{k^*}), \> \pi_Y (x) = \arg \min_{y \in Y} || x - y||, \> y^0 \in Y, \> k \in \mathbb{N}
+\end{equation}
+
+\noindent where $ \rho_k > 0 $ is a learning rate parameter, and $ \pi_Y $ is the projection operator on the set $ Y $. The iterative process (\ref{sq-objective-fn-gradient:eq})-(\ref{sgd-update-rule:eq}) of finding optimal element can be summarized in the Algorithm \ref{sq:alg}. While SGD is an efficient local optimization algorithm, the ultimate task is to find global minimums of (\ref{global-sq-objective-fn:eq}). The research \cite{Norkin_Pflug_Ruszczynski_1998} proposes the stochastic branch and bound method, which can be applied to the optimization algorithm (\ref{sgd-update-rule:eq}). The idea is to sequentially partition the initial problem into regions (with constraint set $ Y_1 \times \ldots \times Y_k $) and use upper and lower to refine partitions with the so-called interchanges relaxation to get lower bounds:
+
+\begin{eqnarray}
+    \label{sq-branch-bound:eq}
+        \sum_{i=1}^I p_i \min_{1 \leq k \leq K} d(\xi_i, \pi_{Y_k} (\xi_i))^r
+        &\leq& \sum_{i=1}^I p_i \min_{y \in Y^K} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r \nonumber \\
+        &\leq& \min_{\{ y_k \in Y_k \}} F(y_1, \ldots, y_K)
+\end{eqnarray}
+
+\subsection{Adaptive Stochastic Quantization}
+
+...
