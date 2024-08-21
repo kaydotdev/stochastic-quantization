@@ -14,7 +14,7 @@ Unlike traditional clustering methods that minimize the distance between each el
 
     \begin{equation}
         \label{sq-objective-constraints:eq}
-            \sum_{k=1}^K x_{ik} = p_i, \> \sum_{k=1}^K q_k = 1, \> i = 1, \ldots, I
+            \sum_{k=1}^K x_{ik} = p_i, \quad \sum_{k=1}^K q_k = 1, \quad i = 1, \ldots, I
     \end{equation}
 
     \noindent where $p_i > 0, \sum_{i=1}^I p_i = 1$ are normalized supply volumes, $x_{ik}$ are transportation volumes, $ d(\xi_i, y_k)_p = \| \xi_i - y_k \|_p = (\sum_{j=1}^n | \xi_{ij} - y_{kj} |^p)^{\frac{1}{p}} $ is the $l_p$ norm defining the distance between elements in the objective function (\ref{sq-objective-fn:eq}), $Y \subset \mathbb{R}^{n}$ is a common constraint set for variables $\{y_k, k = 1, \ldots, K\}$, and $n, I, K \in \mathbb{N}$.
@@ -83,7 +83,7 @@ However, for $K \geq 2$, the function $f(\xi_i, y) = \min_{1 \leq k \leq K} d(\x
 
 \begin{eqnarray}
     \label{sq-objective-fn-gradient:eq}
-        \partial f(\xi, y) &=& \text{conv} \{ (0, \ldots, 0, g_{k^*}, 0, \ldots, 0), \> k^* \in S(\xi, y), \> 0 \in \mathbb{R}^n \} \nonumber \\
+        \partial f(\xi, y) &=& \text{conv} \{ (0, \ldots, 0, g_{k^*}, 0, \ldots, 0), \quad k^* \in S(\xi, y), \quad 0 \in \mathbb{R}^n \} \nonumber \\
         S(\xi, y) &=& \{ k^*: \| \xi - y_{k^*} \| = \min_{1 \leq k \leq K} \| \xi - y_k \| \} \nonumber \\
         g_{k^*} &=& r \| \xi - y_{k^*} \|^{r - 2} (y_{k^*} - \xi)
 \end{eqnarray}
@@ -93,13 +93,13 @@ The expected value function (\ref{global-sq-fn-expansion:eq}) is also generalize
 \begin{algorithm}
     \caption{Stochastic Quantization}\label{sq:alg}
     \begin{algorithmic}[1]
-    \Require $ \{ \xi_i, \> i = 1, \ldots, I \}, \rho, K, T, r $
-    \State $ y_0 = \{ y_k, \> k = 1, \ldots, K \} $ \Comment{Initialize centers}
+    \Require $ \{ \xi_i, \quad i = 1, \ldots, I \}, \rho, K, T, r $
+    \State $ y_0 = \{ y_k, \quad k = 1, \ldots, K \} $ \Comment{Initialize centers}
     \For{$ t \in [0, T - 1] $}
-        \State $ \tilde{\xi} \in \{ \xi_i, \> i = 1, \ldots, I \} $ \Comment{Sample element from feature set}
-        \State $ y_{k_t}, k_t = S(\tilde{\xi}, y_t) $ \Comment{Find the nearest center}
-        \State $ g_{k_t} = r \| \tilde{\xi} - y_{k_t} \|^{r - 2} (y_{k_t} - \tilde{\xi}) $ \Comment{Calculate gradient}
-        \State $ y_{k_t} := \pi_Y (y_{k_t} - \rho g_{k_t}) $ \Comment{Update nearest center}
+        \State $ \tilde{\xi} \in \{ \xi_i, \quad i = 1, \ldots, I \} $ \Comment{Sample element from feature set}
+        \State $ y_k^{(t)}, k_t = S(\tilde{\xi}, y_t) $ \Comment{Find the nearest center}
+        \State $ g_k^{(t)} = r \| \tilde{\xi} - y_k^{(t)} \|^{r - 2} (y_k^{(t)} - \tilde{\xi}) $ \Comment{Calculate gradient}
+        \State $ y_k^{(t)} := \pi_Y (y_k^{(t)} - \rho g_k^{(t)}) $ \Comment{Update nearest center}
     \EndFor
     \end{algorithmic}
 \end{algorithm}
@@ -108,7 +108,7 @@ These gradients can be utilized to find the optimal element $y_{k^*}$ in a featu
 
 \begin{equation}
     \label{sgd-update-rule:eq}
-        y_{k+1} = \pi_Y (y_k - \rho_k g_{k^*}), \> \pi_Y (x) = \arg \min_{y \in Y} \| x - y\|, \> y^0 \in Y, \> k \in \mathbb{N}
+        y_{k+1} = \pi_Y (y_k - \rho_k g_{k^*}), \quad \pi_Y (x) = \arg \min_{y \in Y} \| x - y\|, \quad y^0 \in Y, \quad k \in \mathbb{N}
 \end{equation}
 
 \noindent where $\rho_k > 0$ is a learning rate parameter, and $\pi_Y$ is the projection operator onto the set $Y$. The iterative process (\ref{sq-objective-fn-gradient:eq})-(\ref{sgd-update-rule:eq}) for finding the optimal element is summarized in Algorithm \ref{sq:alg}. While SGD is an efficient local optimization algorithm, the ultimate task is to find global minima of (\ref{global-sq-objective-fn:eq}). The research in \cite{Norkin_Pflug_Ruszczynski_1998} proposes a stochastic branch and bound method applicable to the optimization algorithm (\ref{sgd-update-rule:eq}). The idea is to sequentially partition the initial problem into regions (with constraint set $Y_1 \times \ldots \times Y_K$) and use upper and lower bounds to refine partitions with the so-called interchanges relaxation to obtain lower bounds:
@@ -119,6 +119,25 @@ These gradients can be utilized to find the optimal element $y_{k^*}$ in a featu
         &\leq& \sum_{i=1}^I p_i \min_{y \in Y^K} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r \nonumber \\
         &\leq& \min_{\{ y_k \in Y_k \}} F(y_1, \ldots, y_K)
 \end{eqnarray}
+
+The local convergence conditions of the stochastic generalized gradient method for solving problem (\ref{global-sq-objective-fn:eq}) are determined in Theorem \ref{Theorem 1}, with the proof provided in the works of \cite{Ermoliev_Norkin_2003} and \cite{Ermolev_Norkin_1998}.
+
+\begin{theorem}
+    \label{Theorem 1} \cite{Ermoliev_Norkin_2003,Ermolev_Norkin_1998}. Consider the iterative sequence $ \{ y^{(t)} = (y_1^{(t)}, \ldots, y_K^{(t)}) \} $:
+
+    \begin{align}
+        y_k^{(t)} &:= \pi_Y (y_k^{(t)} - \rho_t g_k^{(t)}) & k^{(t)} &= S(\tilde{\xi}^{(t)}, y^{(t)}) & t &= 0, 1, 2, \ldots \nonumber \\
+        g_k^{(t)} &= r \| \tilde{\xi} - y_k^{(t)} \|^{r - 2} (y_k^{(t)} - \tilde{\xi}) & k &\in \{ 1, \ldots, K \}
+    \end{align}
+
+    Assume that $ \{ \tilde{\xi}^{(t)} = \tilde{\xi}_{k^{(t)}} \} $ are independent sample points from the set $ \{ \xi_i, i = 1, \ldots, I \} $ taken with probabilities $ \{ p_i, i = 1, \ldots, I \} $:
+
+    \begin{equation}
+        \rho_t > 0, \quad \sum_{t=0}^{\infty} \rho_t = \infty, \quad \sum_{t=0}^{\infty} \rho_t^2 < \infty
+    \end{equation}
+
+    Let $ F(Y^*) $ denote the set of values of $ F $ on critical (stationary) points $ Y^* $ of problem (\ref{global-sq-objective-fn:eq}), where $ Y^* = \{ y = (y_1, \ldots, y_K): \partial F(y) \in N_Y (y_1) \times \ldots \times N_Y (y_K) \} $ and $ N_Y (y_k) $ represents the normal cone to the set $ Y $ at point $ y_k $. If $ F(Y^*) $ does not contain intervals and the sequence $ \{ y^{(t)} \} $ is bounded, then $ \{ y^{(t)} \} $ converges to a connected component of $ Y^* $, and the sequence $ \{ F(y^{(t)}) \} $ has a limit.
+\end{theorem}
 
 \subsection{Adaptive Stochastic Quantization}
 
