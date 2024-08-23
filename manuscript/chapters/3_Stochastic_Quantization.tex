@@ -126,14 +126,16 @@ The local convergence conditions of the stochastic generalized gradient method f
     \label{Theorem 1} \cite{Ermoliev_Norkin_2003,Ermolev_Norkin_1998}. Consider the iterative sequence $ \{ y^{(t)} = (y_1^{(t)}, \ldots, y_K^{(t)}) \} $:
 
     \begin{align}
-        y_k^{(t)} &:= \pi_Y (y_k^{(t)} - \rho_t g_k^{(t)}) & k^{(t)} &= S(\tilde{\xi}^{(t)}, y^{(t)}) & t &= 0, 1, 2, \ldots \nonumber \\
-        g_k^{(t)} &= r \| \tilde{\xi} - y_k^{(t)} \|^{r - 2} (y_k^{(t)} - \tilde{\xi}) & k &\in \{ 1, \ldots, K \}
+        \label{sq-iter:eq}
+            y_k^{(t)} &:= \pi_Y (y_k^{(t)} - \rho_t g_k^{(t)}) & k^{(t)} &= S(\tilde{\xi}^{(t)}, y^{(t)}) & t &= 0, 1, 2, \ldots \nonumber \\
+            g_k^{(t)} &= r \| \tilde{\xi} - y_k^{(t)} \|^{r - 2} (y_k^{(t)} - \tilde{\xi}) & k &\in \{ 1, \ldots, K \}
     \end{align}
 
     Assume that $ \{ \tilde{\xi}^{(t)} = \tilde{\xi}_{k^{(t)}} \} $ are independent sample points from the set $ \{ \xi_i, i = 1, \ldots, I \} $ taken with probabilities $ \{ p_i, i = 1, \ldots, I \} $:
 
     \begin{equation}
-        \rho_t > 0, \quad \sum_{t=0}^{\infty} \rho_t = \infty, \quad \sum_{t=0}^{\infty} \rho_t^2 < \infty
+        \label{sq-convergence-cond:eq}
+            \rho_t > 0, \quad \sum_{t=0}^{\infty} \rho_t = \infty, \quad \sum_{t=0}^{\infty} \rho_t^2 < \infty
     \end{equation}
 
     Let $ F(Y^*) $ denote the set of values of $ F $ on critical (stationary) points $ Y^* $ of problem (\ref{global-sq-objective-fn:eq}), where $ Y^* = \{ y = (y_1, \ldots, y_K): \partial F(y) \in N_Y (y_1) \times \ldots \times N_Y (y_K) \} $ and $ N_Y (y_k) $ represents the normal cone to the set $ Y $ at point $ y_k $. If $ F(Y^*) $ does not contain intervals and the sequence $ \{ y^{(t)} \} $ is bounded, then $ \{ y^{(t)} \} $ converges to a connected component of $ Y^* $, and the sequence $ \{ F(y^{(t)}) \} $ has a limit.
@@ -141,4 +143,54 @@ The local convergence conditions of the stochastic generalized gradient method f
 
 \subsection{Adaptive Stochastic Quantization}
 
-...
+The objective function (\ref{global-sq-objective-fn:eq}) minimization is non-smooth non-convex multiextremal large scale stochastic optimization problem. While parameter update recurrent sequence based on SGD (\ref{sgd-update-rule:eq}) is able to converge under conditions (\ref{sq-convergence-cond:eq}), the work of Qian el at. \cite{qian2020} showed that the variance of gradient oscillations are increasing proportionally to the size of training samples:
+
+\begin{equation}
+    \label{sgd-oscillations:eq}
+        \mathbb{V} (g_{\mathcal{B}_k}) \propto \frac{I^2}{b} \mathbb{V} (g_k)
+\end{equation}
+
+\noindent where $ \mathbb{V} $ denotes the variance over a set, $ g_{\mathcal{B}_k} = \frac{1}{b} \sum_{i=1}^{b} g_i (\xi_{\mathcal{B}_i}) $ - an averaged gradient value over a subset $ \xi_{\mathcal{B}_i} \subset \Xi, b = | \xi_{\mathcal{B}_i} | $. These gradient oscillations makes algorithm less stable and slows down the convergence speed. While there are some strategies to increase the convergence stability, e.g., manually tuned learning rate $ \rho > 0 $, annealing schedules \cite{Robbins_Monro_1951} or averaged gradient over a subset, the slow convergence speed in high-dimensional model \cite{Norkin_Kozyriev_Norkin_2024} is a significant drawback of the SGD algorithm.
+
+In the research \cite{Poliak_1987}, Polyak proposed the Momentum Gradient Descent (or the "Heavy Ball Method") an alternative modification to the SGD by introducing an acceleration multiplier $ 0 < \gamma < 1 $ to the recurrent sequence (\ref{sgd-update-rule:eq}), using a physical analogy of the motion of a body under the force of friction:
+
+\begin{equation}
+    \label{momentum-update-rule:eq}
+        y_{k+1} = y_k + \gamma (y_k - y_{k-1}) - \rho_k g_{k^*}
+\end{equation}
+
+A further improved version of a modifier recurrent sequence (\ref{momentum-update-rule:eq}) was proposed by Nesterov \cite{nesterov1983method,walkington_2023} with an extrapolation
+step for parameters estimation:
+
+\begin{equation}
+    \label{nag-update-rule:eq}
+        \tilde{y}_k = y_k - \rho_k g_{k^*}, \quad y_{k+1} = \tilde{y}_k + \gamma (\tilde{y}_k - \tilde{y}_{k-1})
+\end{equation}
+
+While modifications (\ref{momentum-update-rule:eq}), (\ref{nag-update-rule:eq}) can improve the convergence speed, they often suffer from a problem of a vanishing gradient on the sparse data \cite{Bottou_Curtis_Nocedal_2018}. The root cause of the problem is the fixed learning rate value, which performs equal updates for both significant and insignificant parameters of the model. In the paper \cite{Duchi_2011} authors address this issue by introducing an adaptive learning rate $ \tilde{\rho}_k = \rho_k / \sqrt{G_k + \varepsilon} $, where the value of a hyperparameter is normalized over the accumulated gradient value to increase the update for more significant parameters:
+
+\begin{equation}
+    \label{adagrad-update-rule:eq}
+        y_{k+1} = y_k - \frac{\rho_k}{\sqrt{G_k + \varepsilon}} g_{k^*}
+\end{equation}
+
+\noindent where $ G_k = G_{k-1} + g_{k^*}^2 $ - a linear combination of accumulated gradients from previous iterations, $ \varepsilon < < 10^{-8} $ - a denominator smoothing term. The approach (\ref{adagrad-update-rule:eq}) solves issue of convergence on sparse data, but introduces a problem of uncontrollable vanishing of learning rate with each iteration $ \lim_{k \to \infty} \| \tilde{\rho}_k \| = 0 $. Tieleman el at. \cite{tieleman2012rmsprop} proposed another approach for accumulated gradients normalization with moving average $ G_k = 
+\beta G_{k-1} + (1 - \beta) g_{k^*}^2 $, which is an idea of substituting denominator $ G_k $ with a stochastic approximation of an expected value $ \mathbb{E} G_k $ to control learning rate vanishing with averaging multiplier $ 0 < \beta < 1 $.
+
+Kingma el at. \cite{kingma2017adam} introduced another modification to (\ref{adagrad-update-rule:eq}) by adding adaptive estimation of the gradient value $ g_{k^*} $:
+
+\begin{eqnarray}
+    \label{adam-update-rule:eq}
+        m_k = \beta_1 m_{k-1} + (1 - \beta_1) g_k \nonumber \\
+        v_k = \beta_2 v_{k-1} + (1 - \beta_2) g_k^2 \nonumber \\
+        y_{k+1} = y_k - \frac{\rho_k}{\sqrt{v_k + \varepsilon}} m_k
+\end{eqnarray}
+
+\noindent where $ m_k $ - adaptive first moment (expected value) estimation, $ v_k $ - adaptive second moment (variance) estimation, $ 0 < \beta_1 < 1, 0 < \beta_2 < 1 $ - averaging multipliers. Important to mention, that values $ m_i $ and $ v_i $ may be biased (i.e. the expected value of parameter does not equal the value itself), which causes unexpected behavior of oscillation’s variance. Authors proposed corrected estimations for (\ref{adam-update-rule:eq}) as:
+
+\begin{equation}
+    \label{adam-corrected-estimations:eq}
+        \bar{m}_k = \frac{m_k}{1 - \beta_1}, \quad \bar{v}_k = \frac{v_k}{1 - \beta_2}
+\end{equation}
+
+In the paper \cite{Norkin_Kozyriev_Norkin_2024} authors provide a detailed overview of these adaptive parameter update strategies and make a detailed comparison of convergence speed on different problem settings.
