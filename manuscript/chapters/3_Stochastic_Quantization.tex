@@ -1,6 +1,6 @@
 \section{Stochastic Quantization}
 
-Unlike traditional clustering methods that minimize the distance between each element of $\Xi = \{\xi_i, i = 1, \ldots, I\}$ and the nearest center $Y = \{y_k, k = 1, \ldots, K\}$, stochastic quantization conceptualizes the feature set $\Xi$ and cluster centers $Y$ as discrete probability distributions. The Wasserstein (or Kantorovich–Rubinstein) distance is employed to minimize distortion between these distributions when representing a compact distribution by a discrete one \cite{Kuzmenko_Uryasev_2019,Lakshmanan_Pichler_2023}. Subsequent research \cite{Kuzmenko_Uryasev_2019,Norkin_Onishchenko_2005} has explored the application of quantization algorithms to solve optimal allocation problems for service centers, where each atom of the discrete distribution represents the location of facilities and customers, respectively.
+Unlike traditional clustering methods that minimize the distance between each element of $\Xi = \{\xi_i, i = 1, \ldots, I\}$ and the nearest center $Y = \{y_k, k = 1, \ldots, K\}$, Stochastic Quantization conceptualizes the feature set $\Xi$ and cluster centers $Y$ as discrete probability distributions. The Wasserstein (or Kantorovich–Rubinstein) distance is employed to minimize distortion between these distributions when representing a compact distribution by a discrete one \cite{Kuzmenko_Uryasev_2019,Lakshmanan_Pichler_2023}. Subsequent research \cite{Kuzmenko_Uryasev_2019,Norkin_Onishchenko_2005} has explored the application of quantization algorithms to solve optimal allocation problems for service centers, where each atom of the discrete distribution represents the location of facilities and customers, respectively.
 
 \begin{definition}
     \label{Stochastic Quantization} \cite{Kuzmenko_Uryasev_2019}. Optimal quantization minimizes the weighted sum of distances between elements of the feature set $\{\xi_i\} \subset \mathbb{R}^{n}$ and centers $\{y_k\} \subset \mathbb{R}^{n}$:
@@ -48,7 +48,7 @@ Here, $\mathbb{E}_{i \sim p}$ denotes the expected value over the random index $
         \min\{\| y_{k^*}^*(t) - \xi_{i^*} \|, \min_{k \notin k^*} \| y_k^* - \xi_{i^*} \|\} < \min_k \| y_k^* - \xi_{i^*} \|
     \end{equation}
 
-    \noindent Thus, $y^* = (y_1^*, \ldots, y_K^*)$ is not a local minimum of the objective function (\ref{global-sq-fn-expansion:eq}). Now, consider the case where $ \| y_{k^*}^* - \xi_i \| > \min_k \| y_k^* - \xi_i \|$ for all $i$. By assumption, $\min_k \| y_k^* - \xi_{i'} \|$ for some $i'$. The vector $y' = (y_1^*, \ldots, y_{k^* - 1}^*, \xi_{i'}, y_{k^* + 1}^*, \ldots, y_K^*)$ satisfies $F(y') < F(y^*)$, contradicting the assumption that $y^*$ is a minimum. This completes the proof. $ \qed $.
+    \noindent Thus, $y^* = (y_1^*, \ldots, y_K^*)$ is not a local minimum of the objective function (\ref{global-sq-fn-expansion:eq}). Now, consider the case where $ \| y_{k^*}^* - \xi_i \| > \min_k \| y_k^* - \xi_i \|$ for all $i$. By assumption, $\min_k \| y_k^* - \xi_{i'} \|$ for some $i'$. The vector $y' = (y_1^*, \ldots, y_{k^* - 1}^*, \xi_{i'}, y_{k^* + 1}^*, \ldots, y_K^*)$ satisfies $F(y') < F(y^*)$, contradicting the assumption that $y^*$ is a minimum. This completes the proof. $ \qed $
 \end{proof}
 
 For a continuous probability distribution $\Xi$, we can interpret the objective function (\ref{global-sq-objective-fn:eq}) as an unconstrained smooth stochastic optimization problem \cite{ermoliev1976stochastic,Newton_Yousefian_Pasupathy_2018,Norkin_Kozyriev_Norkin_2024}:
@@ -108,7 +108,7 @@ These gradients can be utilized to find the optimal element $y_{k^*}$ in a featu
 
 \begin{equation}
     \label{sgd-update-rule:eq}
-        y_{k+1} = \pi_Y (y_k - \rho_k g_{k^*}), \quad \pi_Y (x) = \arg \min_{y \in Y} \| x - y\|, \quad y^0 \in Y, \quad k \in \mathbb{N}
+        y_{k+1} = \pi_Y (y_k - \rho_k g_{k^*}), \quad \pi_Y (x) = \argmin_{y \in Y} \| x - y\|, \quad y^0 \in Y, \quad k \in \mathbb{N}
 \end{equation}
 
 \noindent where $\rho_k > 0$ is a learning rate parameter, and $\pi_Y$ is the projection operator onto the set $Y$. The iterative process (\ref{sq-objective-fn-gradient:eq})-(\ref{sgd-update-rule:eq}) for finding the optimal element is summarized in Algorithm \ref{sq:alg}. While SGD is an efficient local optimization algorithm, the ultimate task is to find global minima of (\ref{global-sq-objective-fn:eq}). The research in \cite{Norkin_Pflug_Ruszczynski_1998} proposes a stochastic branch and bound method applicable to the optimization algorithm (\ref{sgd-update-rule:eq}). The idea is to sequentially partition the initial problem into regions (with constraint set $Y_1 \times \ldots \times Y_K$) and use upper and lower bounds to refine partitions with the so-called interchanges relaxation to obtain lower bounds:

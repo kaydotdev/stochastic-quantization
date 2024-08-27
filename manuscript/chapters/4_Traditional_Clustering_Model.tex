@@ -53,7 +53,7 @@ Given objective function (\ref{lloyd-update-step:eq}) is a generalized different
 
 \begin{equation}
     \label{lloyd-grad-set:eq}
-        \partial F(y) = \sum_{i=1}^I p_i \cdot \text{conv}_{k \in K_i} \{ 2 (y_k - \xi_i) \}, \> K_i = \arg \min_{1 \leq k \leq K} || y_k - \xi_i ||
+        \partial F(y) = \sum_{i=1}^I p_i \cdot \text{conv}_{k \in K_i} \{ 2 (y_k - \xi_i) \}, \> K_i = \argmin_{1 \leq k \leq K} || y_k - \xi_i ||
 \end{equation}
 
 And its some generalized gradient is the compound vector $ g(y) = (g_k(y), k = 1, ..., K) $:
@@ -101,4 +101,4 @@ Conditions of convergence for this averaged sequence were studied in \cite{mikha
         \tilde{y}_k^{t+1} = (1 - \tilde{\sigma}_{t+1}) \tilde{y}_k^{t} + \tilde{\sigma}_{t+1} y_k^{t+1}, \> \tilde{\sigma}_{k, t+1} = \frac{1}{N_k^t} / \sum_{s=1}^{t+1} \frac{1}{N_k^s}, \> k = 1, ..., K
 \end{equation}
 
-The standard KMeans algorithm requires finding the nearest cluster center $ \arg \min_{1 \leq k \leq K} || y_k - \xi_i || $ to each point $ \{ \xi_i, \> i = 1, ..., I \} $. This can be a time consuming operation in case of very large number $ I $. Moreover, points $ \xi_i $ may be sampled sequentially from some continuous distribution and thus the sample $ \{ \xi_i, \> i = 1, 2, ... \} $ can be potentially arbitrary large. The stochastic quantization algorithm (\ref{kmeans-trajectory-avg:eq}) uses only one sampled point $ \tilde{\xi}^t $ at each iteration and thus only one problem $ \arg \min_{1 \leq k \leq K} || y_k - \tilde{\xi}^t || $ is solved at iteration $ t $. But one can use a batch of $ m $ such points $ \{ \tilde{\xi}^t_{i_1^t}, ..., \tilde{\xi}^t_{i_m^t} \} $ instead of the whole sample $ \{ \xi_i \} $, $ m < I $. 
+The standard KMeans algorithm requires finding the nearest cluster center $ \argmin_{1 \leq k \leq K} || y_k - \xi_i || $ to each point $ \{ \xi_i, \> i = 1, ..., I \} $. This can be a time consuming operation in case of very large number $ I $. Moreover, points $ \xi_i $ may be sampled sequentially from some continuous distribution and thus the sample $ \{ \xi_i, \> i = 1, 2, ... \} $ can be potentially arbitrary large. The Stochastic Quantization algorithm (\ref{kmeans-trajectory-avg:eq}) uses only one sampled point $ \tilde{\xi}^t $ at each iteration and thus only one problem $ \argmin_{1 \leq k \leq K} || y_k - \tilde{\xi}^t || $ is solved at iteration $ t $. But one can use a batch of $ m $ such points $ \{ \tilde{\xi}^t_{i_1^t}, ..., \tilde{\xi}^t_{i_m^t} \} $ instead of the whole sample $ \{ \xi_i \} $, $ m < I $. 
