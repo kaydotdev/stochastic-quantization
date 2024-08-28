@@ -1,5 +1,12 @@
 # Robust Clustering on High-Dimensional Data with Stochastic Quantization
 
+[![Open paper in Colab](https://img.shields.io/badge/Colab-F9AB00?logo=googlecolab&color=525252)](https://colab.research.google.com/github/kaydotdev/stochastic-quantization/blob/master/code/notebooks/simlearning.ipynb)
+[![Open paper in Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?logo=Kaggle&logoColor=white)](https://www.kaggle.com/notebooks/welcome?src=https://github.com/kaydotdev/stochastic-quantization/blob/master/code/notebooks/simlearning.ipynb)
+
+by Vladimir Norkin<sup>1,2</sup>, [Anton Kozyriev](mailto:a.kozyriev@kpi.ua)<sup>1</sup>
+
+ - Igor Sikorsky Kyiv Polytechnic Institute, National Technical University of Ukraine, Kyiv, 03056, Ukraine
+ - V.M.Glushkov Institute of Cybernetics, National Academy of Sciences of Ukraine, Kyiv, 03178, Ukraine
 
 ## Abstract
 
@@ -21,3 +28,14 @@ enhance the algorithm's convergence speed by introducing modifications with an a
 
 stochastic quantization, clustering algorithms, stochastic gradient descent, 
 non-convex optimization, deep metric learning, data compression
+
+## License
+
+This repository contains both software (source code) and an academic manuscript. Different licensing terms apply to 
+these components as follows:
+ 1. Source Code: All source code contained in this repository, unless otherwise specified, is licensed under the MIT 
+License. The full text of the MIT License can be found in the file `LICENSE.code.md` in the `code` directory.
+ 2. Academic Manuscript: The academic manuscript, including all LaTeX source files and associated content (e.g. 
+figures), is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License 
+(CC BY-NC-ND 4.0). The full text of the CC BY-NC-ND 4.0 License can be found in the file `LICENSE.manuscript.md` in 
+the `manuscript` directory.
