@@ -14,7 +14,7 @@ Informatics"](https://jais.net.ua/)
 ## Categories
 
  - **Primary**: Machine Learning (cs.LG)
- - **Cross lists**:  Optimization and Control (math.OC)
+ - **Cross lists**: Optimization and Control (math.OC)
  - **MSC-class**: 90C15
 
 ## Abstract
