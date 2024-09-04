@@ -1,6 +1,6 @@
 \section{Traditional Clustering Model}
 
-The optimal clustering problem seeks to find K cluster centers $ \{ y_1, ..., y_K \} $ that minimize the sum of distances from each point $ \xi $ to the nearest center. Lloyd's KMeans algorithm \cite{Lloyd_1982} is a prominent method for solving quantization and clustering problems, with numerous extensions \cite{Jain_2010}. Bottou and Bengio \cite{Bottou_1994} interpreted the KMeans algorithm as an analogue of Newton's method and proposed several stochastic gradient descent algorithms for optimal clustering. These stochastic KMeans algorithms use only a subset of possible $ \xi $ values or even a single element at each iteration.
+The optimal clustering problem seeks to find K cluster centers $ \{ y_1, ..., y_K \} $ that minimize the sum of distances from each point $ \xi $ to the nearest center. Lloyd's K-Means algorithm \cite{Lloyd_1982} is a prominent method for solving quantization and clustering problems, with numerous extensions \cite{Jain_2010}. Bottou and Bengio \cite{Bottou_1994} interpreted the K-Means algorithm as an analogue of Newton's method and proposed several stochastic gradient descent algorithms for optimal clustering. These stochastic K-Means algorithms use only a subset of possible $ \xi $ values or even a single element at each iteration.
 
 \begin{definition}
     \label{KMeans} \cite{Lloyd_1982}. KMean iterative algorithm starts with the set of current cluster centers $ \{ y_k^t, \> k = 1, ..., K \} $, the feature set $ \{ \xi_i, \> i = 1, ..., I \} $ is subdivided into $ K $ non-intersecting groups $ \{ I_1^t, ..., I_K^t \} $: point $ \xi_i $ belongs to group $ I_s^t $ if
@@ -10,7 +10,7 @@ The optimal clustering problem seeks to find K cluster centers $ \{ y_1, ..., y_
             || \xi_i - y_s^t || = \min_{1 \leq k \leq K} \{ || \xi_i - y_k^t || \}
     \end{equation}
 
-    \noindent Denote $ N_k^t $ the number of points in group $ I_k^t $, $ N_k^t = 0 $ if $ I_k^t = \emptyset $, $ \sum_{k=1}^K N_k^t = 1 $. Remark that $ I_k^t $ and $ N_k^t $ depend on $ y^t $. KMeans iteratively evaluates next cluster centers $ y^{t+1} $ with the estimation:
+    \noindent Denote $ N_k^t $ the number of points in group $ I_k^t $, $ N_k^t = 0 $ if $ I_k^t = \emptyset $, $ \sum_{k=1}^K N_k^t = 1 $. Remark that $ I_k^t $ and $ N_k^t $ depend on $ y^t $. K-Means iteratively evaluates next cluster centers $ y^{t+1} $ with the estimation:
 
     \begin{equation}
         \label{kmeans-center-estimation:eq}
@@ -26,7 +26,7 @@ The optimal clustering problem seeks to find K cluster centers $ \{ y_1, ..., y_
     \end{eqnarray}
 \end{definition}
 
-In \cite{Bottou_1994} the form of KMeans algorithm (\ref{kmeans-center-alt:eq}) was connected to Newton's step for solving at each iteration the smooth quadratic problem
+In \cite{Bottou_1994} the form of K-Means algorithm (\ref{kmeans-center-alt:eq}) was connected to Newton's step for solving at each iteration the smooth quadratic problem
 
 \begin{equation}
     \label{kmeans-newton-form:eq}
@@ -35,14 +35,14 @@ In \cite{Bottou_1994} the form of KMeans algorithm (\ref{kmeans-center-alt:eq}) 
 
 \noindent with block diagonal Hessian and with diagonal number $ \frac{1}{N_k^t} $ in block $ k $. In that paper it was also considered stochastic batch and online version of the stochastic gradient methods with learning rate $ \frac{1}{t + 1} $ for solving a sequence of problems (\ref{kmeans-newton-form:eq}).
 
-The initial positions of cluster centers $ \{ y_k^0, \> k = 1, ..., K \} $ are set either at random among $ \{ \xi_i, \> i = 1, ..., I \} $ or according the algorithm KMeans++ \cite{Arthur_Vassilvitskii_2007,Nguyen_Duong_2018}. With KMeans++ initialization strategy, the rate of convergence to local optimum is estimated to be $ \mathbb{E} [F] \leq 8(\ln k + 2 ) F^{*} $, where $ F^{*} $ - an optimal solution \cite{Arthur_Vassilvitskii_2007}. Assume $ \{ y_1^0, ..., y_k^0 \} \> (k<K) $ initial cluster centers have already been chosen. The next center $ y_{k+1}^0 \> (k+1<K) $ is sampled from the set $ \{ \xi_i, \> i = 1, ..., I \} $ with probabilities:
+The initial positions of cluster centers $ \{ y_k^0, \> k = 1, ..., K \} $ are set either at random among $ \{ \xi_i, \> i = 1, ..., I \} $ or according the algorithm K-Means++ \cite{Arthur_Vassilvitskii_2007,Nguyen_Duong_2018}. With K-Means++ initialization strategy, the rate of convergence to local optimum is estimated to be $ \mathbb{E} [F] \leq 8(\ln k + 2 ) F^{*} $, where $ F^{*} $ - an optimal solution \cite{Arthur_Vassilvitskii_2007}. Assume $ \{ y_1^0, ..., y_k^0 \} \> (k<K) $ initial cluster centers have already been chosen. The next center $ y_{k+1}^0 \> (k+1<K) $ is sampled from the set $ \{ \xi_i, \> i = 1, ..., I \} $ with probabilities:
 
 \begin{equation}
     \label{kmeans-plus-plus-init:eq}
         q_j = \frac{\min_{1 \leq s \leq k} || \xi_j - y_s^0 ||^2}{\sum_{i=1}^I \min_{1 \leq s \leq k} || \xi_i - y_s^0 ||^2}
 \end{equation}
 
-The next positions of the cluster centers $ \{ y_1^t, ..., y_K^t \} $ for $ t > 0 $ are calculated as in the original Lloyd algorithm \cite{Lloyd_1982}, the expectation-maximization (EM) approach to KMeans algorithm. Consider problem for $ r = 2 $: 
+The next positions of the cluster centers $ \{ y_1^t, ..., y_K^t \} $ for $ t > 0 $ are calculated as in the original Lloyd algorithm \cite{Lloyd_1982}, the expectation-maximization (EM) approach to K-Means algorithm. Consider problem for $ r = 2 $: 
 
 \begin{equation}
     \label{lloyd-update-step:eq}
@@ -63,7 +63,7 @@ And its some generalized gradient is the compound vector $ g(y) = (g_k(y), k = 1
         g_k(y) = \sum_{i=1}^I 2 p_i (y_{k_i} - \xi_i), \> k_i \in K_i
 \end{equation}
 
-Sculley \cite{Sculley_2010} addresses the limitation of Lloyd algorithm with update rule (\ref{lloyd-update-step:eq}), highlighting that objective function $ F(y) $ calculation is expensive for large datasets, due to $ O(K \cdot I \cdot d) $ time complexity for a given feature set $ \{ \xi_i \} $, where $ d $ - dimensionality of each sample $ \xi_i $. Author proposed a solution by introducing a Mini-Batch KMeans modification to the Lloyd algorithm, where the set of points $ \{ \xi_i, i = 1, ..., I \} $ is subdivided into non-intersecting subsets $ I_k $, $ k = 1, ..., K $,  such that $ i \in I_k $ if $ || y - \xi_i || = \min_{k \in \{ 1, ..., K \}} || y_k - \xi_i || $.  Some $ I_k $ may occur empty, for example, if $ \max_{1 \leq i \leq I} \min_{1 \leq k \leq K} \text{dist} (y_k, \xi_i) < \min_{1 \leq i \leq I} \text{dist} (y_k, \xi_i) $. In this modifications the generalized gradients of function is $ g(y) = (g_1(y), ..., g_K(y)) $, where:
+Sculley \cite{Sculley_2010} addresses the limitation of Lloyd algorithm with update rule (\ref{lloyd-update-step:eq}), highlighting that objective function $ F(y) $ calculation is expensive for large datasets, due to $ O(K \cdot I \cdot d) $ time complexity for a given feature set $ \{ \xi_i \} $, where $ d $ - dimensionality of each sample $ \xi_i $. Author proposed a solution by introducing a Mini-Batch K-Means modification to the Lloyd algorithm, where the set of points $ \{ \xi_i, i = 1, ..., I \} $ is subdivided into non-intersecting subsets $ I_k $, $ k = 1, ..., K $,  such that $ i \in I_k $ if $ || y - \xi_i || = \min_{k \in \{ 1, ..., K \}} || y_k - \xi_i || $.  Some $ I_k $ may occur empty, for example, if $ \max_{1 \leq i \leq I} \min_{1 \leq k \leq K} \text{dist} (y_k, \xi_i) < \min_{1 \leq i \leq I} \text{dist} (y_k, \xi_i) $. In this modifications the generalized gradients of function is $ g(y) = (g_1(y), ..., g_K(y)) $, where:
 
 \begin{equation}
     \label{lloyd-gen-grad-component:eq}
@@ -83,9 +83,9 @@ The standard generalized gradient method for solving problem (\ref{lloyd-update-
     \end{cases}
 \end{equation}
 
-Recent studies \cite{Tang_2017,Zhao_Lan_Chen_Ngo_2021} have examined stochastic KMeans algorithms as methods for solving corresponding non-convex, non-smooth stochastic optimization problems. However, the convergence properties of these algorithms lack rigorous validation. Let $ N_k^t $ is the number of elements in $ I_k \neq \emptyset $ at iteration $ t $. If we chose $ \rho_t $ dependent on $ k $, namely, $ \rho_{tk} = 0.5 \frac{I}{N_k^t} $, then process (\ref{lloyd-gen-grad:eq}) becomes identical to KMeans one (\ref{kmeans-center-estimation:eq}). Here $ \rho_{tk} \leq 0.5 I $ and can be rather large that does not guarantee convergence of (\ref{kmeans-center-estimation:eq}). A more general choice can be $ \rho_{tk} = \rho_t \frac{I}{N_k^t} $ with $ \rho_t \geq 0 $ satisfying conditions  and thus $ \lim_{t \to \infty} \max_k \rho_{tk} = 0 $.
+Recent studies \cite{Tang_2017,Zhao_Lan_Chen_Ngo_2021} have examined stochastic K-Means algorithms as methods for solving corresponding non-convex, non-smooth stochastic optimization problems. However, the convergence properties of these algorithms lack rigorous validation. Let $ N_k^t $ is the number of elements in $ I_k \neq \emptyset $ at iteration $ t $. If we chose $ \rho_t $ dependent on $ k $, namely, $ \rho_{tk} = 0.5 \frac{I}{N_k^t} $, then process (\ref{lloyd-gen-grad:eq}) becomes identical to K-Means one (\ref{kmeans-center-estimation:eq}). Here $ \rho_{tk} \leq 0.5 I $ and can be rather large that does not guarantee convergence of (\ref{kmeans-center-estimation:eq}). A more general choice can be $ \rho_{tk} = \rho_t \frac{I}{N_k^t} $ with $ \rho_t \geq 0 $ satisfying conditions  and thus $ \lim_{t \to \infty} \max_k \rho_{tk} = 0 $.
 
-\subsection{Modifications of KMeans algorithm}
+\subsection{Modifications of K-Means algorithm}
 
 One can consider a complement to the sequence (\ref{lloyd-gen-grad:eq}) by the Cesaro trajectory averaging:
 
@@ -94,11 +94,11 @@ One can consider a complement to the sequence (\ref{lloyd-gen-grad:eq}) by the C
         \bar{y}_k^{t+1} = (1 - \sigma_{t+1}) \bar{y}_k^{t} + \sigma_{t+1} y_k^{t+1}, \> \sigma_{t+1} = \frac{\rho_{t+1}}{\sum_{s=1}^{t+1} \rho_{s}}, \> k = 1, ..., K
 \end{equation}
 
-Conditions of convergence for this averaged sequence were studied in \cite{mikhalevich2024}, in particular, they admit learning rate $ \rho_t $ proportional to $ 1 / \sqrt{t+1} $. A similar approach for KMeans generated sequences (\ref{kmeans-center-estimation:eq}) aims to average sequence by the feature set size $ N_k $:
+Conditions of convergence for this averaged sequence were studied in \cite{mikhalevich2024}, in particular, they admit learning rate $ \rho_t $ proportional to $ 1 / \sqrt{t+1} $. A similar approach for K-Means generated sequences (\ref{kmeans-center-estimation:eq}) aims to average sequence by the feature set size $ N_k $:
 
 \begin{equation}
     \label{kmeans-trajectory-avg-alt:eq}
         \tilde{y}_k^{t+1} = (1 - \tilde{\sigma}_{t+1}) \tilde{y}_k^{t} + \tilde{\sigma}_{t+1} y_k^{t+1}, \> \tilde{\sigma}_{k, t+1} = \frac{1}{N_k^t} / \sum_{s=1}^{t+1} \frac{1}{N_k^s}, \> k = 1, ..., K
 \end{equation}
 
-The standard KMeans algorithm requires finding the nearest cluster center $ \argmin_{1 \leq k \leq K} || y_k - \xi_i || $ to each point $ \{ \xi_i, \> i = 1, ..., I \} $. This can be a time consuming operation in case of very large number $ I $. Moreover, points $ \xi_i $ may be sampled sequentially from some continuous distribution and thus the sample $ \{ \xi_i, \> i = 1, 2, ... \} $ can be potentially arbitrary large. The Stochastic Quantization algorithm (\ref{kmeans-trajectory-avg:eq}) uses only one sampled point $ \tilde{\xi}^t $ at each iteration and thus only one problem $ \argmin_{1 \leq k \leq K} || y_k - \tilde{\xi}^t || $ is solved at iteration $ t $. But one can use a batch of $ m $ such points $ \{ \tilde{\xi}^t_{i_1^t}, ..., \tilde{\xi}^t_{i_m^t} \} $ instead of the whole sample $ \{ \xi_i \} $, $ m < I $. 
+The standard K-Means algorithm requires finding the nearest cluster center $ \argmin_{1 \leq k \leq K} || y_k - \xi_i || $ to each point $ \{ \xi_i, \> i = 1, ..., I \} $. This can be a time consuming operation in case of very large number $ I $. Moreover, points $ \xi_i $ may be sampled sequentially from some continuous distribution and thus the sample $ \{ \xi_i, \> i = 1, 2, ... \} $ can be potentially arbitrary large. The Stochastic Quantization algorithm (\ref{kmeans-trajectory-avg:eq}) uses only one sampled point $ \tilde{\xi}^t $ at each iteration and thus only one problem $ \argmin_{1 \leq k \leq K} || y_k - \tilde{\xi}^t || $ is solved at iteration $ t $. But one can use a batch of $ m $ such points $ \{ \tilde{\xi}^t_{i_1^t}, ..., \tilde{\xi}^t_{i_m^t} \} $ instead of the whole sample $ \{ \xi_i \} $, $ m < I $. 
