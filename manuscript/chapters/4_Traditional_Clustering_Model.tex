@@ -3,7 +3,7 @@
 The optimal clustering problem seeks to find K cluster centers $ \{ y_1, ..., y_K \} $ that minimize the sum of distances from each point $ \xi $ to the nearest center. Lloyd's K-Means algorithm \cite{Lloyd_1982} is a prominent method for solving quantization and clustering problems, with numerous extensions \cite{Jain_2010}. Bottou and Bengio \cite{Bottou_1994} interpreted the K-Means algorithm as an analogue of Newton's method and proposed several stochastic gradient descent algorithms for optimal clustering. These stochastic K-Means algorithms use only a subset of possible $ \xi $ values or even a single element at each iteration.
 
 \begin{definition}
-    \label{KMeans} \cite{Lloyd_1982}. KMean iterative algorithm starts with the set of current cluster centers $ \{ y_k^t, \> k = 1, ..., K \} $, the feature set $ \{ \xi_i, \> i = 1, ..., I \} $ is subdivided into $ K $ non-intersecting groups $ \{ I_1^t, ..., I_K^t \} $: point $ \xi_i $ belongs to group $ I_s^t $ if
+    \label{KMeans} \cite{Lloyd_1982}. K-Means iterative algorithm starts with the set of current cluster centers $ \{ y_k^t, \> k = 1, ..., K \} $, the feature set $ \{ \xi_i, \> i = 1, ..., I \} $ is subdivided into $ K $ non-intersecting groups $ \{ I_1^t, ..., I_K^t \} $: point $ \xi_i $ belongs to group $ I_s^t $ if
 
     \begin{equation}
         \label{kmeans-group:eq}
