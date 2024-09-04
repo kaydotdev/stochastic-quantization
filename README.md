@@ -1,5 +1,6 @@
 # Robust Clustering on High-Dimensional Data with Stochastic Quantization
 
+[![Preprint DOI](https://img.shields.io/badge/DOI-10.48550%2FarXiv.2409.02066-blue.svg)](https://doi.org/10.48550/arXiv.2409.02066)
 [![Open paper in Colab](https://img.shields.io/badge/Colab-F9AB00?logo=googlecolab&color=525252)](https://colab.research.google.com/github/kaydotdev/stochastic-quantization/blob/master/code/notebooks/simlearning.ipynb)
 [![Open paper in Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?logo=Kaggle&logoColor=white)](https://www.kaggle.com/notebooks/welcome?src=https://github.com/kaydotdev/stochastic-quantization/blob/master/code/notebooks/simlearning.ipynb)
 
