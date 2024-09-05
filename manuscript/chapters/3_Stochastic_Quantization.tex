@@ -1,86 +1,65 @@
 \section{Stochastic Quantization}
 
-Unlike traditional clustering methods that minimize the distance between each element of $\Xi = \{\xi_i, i = 1, \ldots, I\}$ and the nearest center $Y = \{y_k, k = 1, \ldots, K\}$, Stochastic Quantization conceptualizes the feature set $\Xi$ and cluster centers $Y$ as discrete probability distributions. The Wasserstein (or Kantorovich–Rubinstein) distance is employed to minimize distortion between these distributions when representing a compact distribution by a discrete one \cite{Kuzmenko_Uryasev_2019,Lakshmanan_Pichler_2023}. Subsequent research \cite{Kuzmenko_Uryasev_2019,Norkin_Onishchenko_2005} has explored the application of quantization algorithms to solve optimal allocation problems for service centers, where each atom of the discrete distribution represents the location of facilities and customers, respectively.
-
+Unlike traditional clustering methods that minimize the distance between each element of $\Xi = \{\xi_i, i = 1, \ldots, I\}$ and the nearest center $Y = \{y_k, k = 1, \ldots, K\}$, Stochastic Quantization conceptualizes the feature set $\Xi$ and cluster centers $Y$ as discrete probability distributions. The Wasserstein (or Kantorovich–Rubinstein) distance is employed to minimize distortion between these distributions when representing a continuous distribution by a discrete one \cite{Kuzmenko_Uryasev_2019,Lakshmanan_Pichler_2023}. Subsequent research \cite{Kuzmenko_Uryasev_2019,Norkin_Onishchenko_2005} has explored the application of quantization algorithms to solve optimal allocation problems for service centers, where each atom of the discrete distribution represents the location of facilities and customers, respectively.
 \begin{definition}
     \label{Stochastic Quantization} \cite{Kuzmenko_Uryasev_2019}. Optimal quantization minimizes the weighted sum of distances between elements of the feature set $\{\xi_i\} \subset \mathbb{R}^{n}$ and centers $\{y_k\} \subset \mathbb{R}^{n}$:
-
     \begin{equation}
         \label{sq-objective-fn:eq}
             \min_{y = \{ y_1, \ldots, y_K \} \in Y^K \subset \mathbb{R}^{nK}} \min_{q = \{ q_1, \ldots, q_K \} \in \mathbb{R}^K_{+}} \min_{x = \{ x_{ij} \geq 0 \}} \sum_{i=1}^I \sum_{k=1}^K d(\xi_i, y_k)^r x_{ik}
     \end{equation}
-
     subject to constraints:
-
     \begin{equation}
         \label{sq-objective-constraints:eq}
             \sum_{k=1}^K x_{ik} = p_i, \quad \sum_{k=1}^K q_k = 1, \quad i = 1, \ldots, I
     \end{equation}
-
     \noindent where $p_i > 0, \sum_{i=1}^I p_i = 1$ are normalized supply volumes, $x_{ik}$ are transportation volumes, $ d(\xi_i, y_k)_p = \| \xi_i - y_k \|_p = (\sum_{j=1}^n | \xi_{ij} - y_{kj} |^p)^{\frac{1}{p}} $ is the $l_p$ norm defining the distance between elements in the objective function (\ref{sq-objective-fn:eq}), $Y \subset \mathbb{R}^{n}$ is a common constraint set for variables $\{y_k, k = 1, \ldots, K\}$, and $n, I, K \in \mathbb{N}$.
 \end{definition}
-
 In this research, we employ the Euclidean norm ($p = 2$) as the distance metric, defined as $ d(\xi_i, y_k)_2 = \sqrt{\sum_{j=1}^n | \xi_{ij} - y_{kj} |^2} $. The choice of distance metric may vary depending on the problem domain. For instance, the cosine similarity function $ d(\xi_i, y_j)_{\text{cos}} = \cos(\xi_i, y_j) = \frac{\xi_i \cdot y_j}{\| \xi_i \| \cdot \| y_j \|} $ is utilized in text similarity tasks \cite{Babic_2020,vor_der_bruck_pouly_2019}, while Kolmogorov and Levy metrics are employed for probability and risk theory problems \cite{Kuzmenko_Uryasev_2019}.
 
 It is evident that in the optimal plan, all mass at point $\xi_i$ is transported to the nearest point $y_k$. Consequently, problem (\ref{sq-objective-fn:eq})-(\ref{sq-objective-constraints:eq}) can be reduced to the following non-convex, non-smooth global stochastic optimization problem, with the objective function defined as:
-
 \begin{equation}
     \label{global-sq-objective-fn:eq}
         \min_{y = \{ y_1, \ldots, y_K \} \in Y^K \subset \mathbb{R}^{nK}} F(y_1, \ldots, y_k)
 \end{equation}
-
 \noindent where
-
 \begin{equation}
     \label{global-sq-fn-expansion:eq}
         F(y) = F(y_1, \ldots, y_k) = \sum_{i=1}^I p_i \min_{1 \leq k \leq K} d(\xi_i, y_k)^r = \mathbb{E}_{i \sim p} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r
 \end{equation}
-
 Here, $\mathbb{E}_{i \sim p}$ denotes the expected value over the random index $i$ that takes values $\{1, \ldots, I\}$ with probabilities $\{p_1, \ldots, p_I\}$, respectively.
-
 \begin{lemma}
     \label{Lemma 1} In the global optimum $y^* = (y_1^*, \ldots, y_K^*)$ of (\ref{sq-objective-constraints:eq}), all $\{y_1^*, \ldots, y_K^*\}$ belong to the convex hull of elements $\{\xi_1, \ldots, \xi_I\}$ in the feature set.
 \end{lemma}
 \begin{proof}
     Assume, by contradiction, that there exists some $y_{k^*}^* \notin \text{conv}\{\xi_1, \ldots, \xi_I\}$. Consider the projection $\bar{y}_{k^*}^*$ of $y_{k^*}^*$ onto $\text{conv}\{\xi_1, \ldots, \xi_I\}$ and points $y_{k^*}^*(t) = (1 - t)y_{k^*}^* + t\bar{y}_{k^*}^*$, $t \in [0, 1]$. We observe that $\forall \xi_i, t \in (0, 1]: \|y_{k^*}^*(t) - \xi_i\| < \|y_{k^*}^* - \xi_i\|$. If $\|y_{k^*}^* - \xi_{i^*}\| = \min_{1 \leq k \leq K} \|y_k^* - \xi_{i^*}\|$ for some $i^*$, then
-
     \begin{equation}
         \min\{\| y_{k^*}^*(t) - \xi_{i^*} \|, \min_{k \notin k^*} \| y_k^* - \xi_{i^*} \|\} < \min_k \| y_k^* - \xi_{i^*} \|
     \end{equation}
-
     \noindent Thus, $y^* = (y_1^*, \ldots, y_K^*)$ is not a local minimum of the objective function (\ref{global-sq-fn-expansion:eq}). Now, consider the case where $ \| y_{k^*}^* - \xi_i \| > \min_k \| y_k^* - \xi_i \|$ for all $i$. By assumption, $\min_k \| y_k^* - \xi_{i'} \|$ for some $i'$. The vector $y' = (y_1^*, \ldots, y_{k^* - 1}^*, \xi_{i'}, y_{k^* + 1}^*, \ldots, y_K^*)$ satisfies $F(y') < F(y^*)$, contradicting the assumption that $y^*$ is a minimum. This completes the proof. $ \qed $
 \end{proof}
 
-For a continuous probability distribution $\Xi$, we can interpret the objective function (\ref{global-sq-objective-fn:eq}) as an unconstrained smooth stochastic optimization problem \cite{ermoliev1976stochastic,Newton_Yousefian_Pasupathy_2018,Norkin_Kozyriev_Norkin_2024}:
-
+For a continuous probability distribution $P(d\xi)$, we can interpret the objective function (\ref{global-sq-objective-fn:eq}) as a mathematical expectation in a stochastic optimization problem \cite{ermoliev1976stochastic,Newton_Yousefian_Pasupathy_2018,Norkin_Kozyriev_Norkin_2024}:
 \begin{equation}
     \label{smooth-stoch-opt-problem:eq}
-        \min_{y = \{ y_1, \ldots, y_K \} \in Y^K \subset \mathbb{R}^{nK}} F(y_1, \ldots, y_k) = \mathbb{E} \tilde{F}(y, \xi) = \int_{\xi \in \Xi} \tilde{F}(y, \xi) P(d \xi)
+        \min_{y = \{ y_1, \ldots, y_K \} \in Y^K \subset \mathbb{R}^{nK}} 
+				\left[F(y_1, \ldots, y_k) = \mathbb{E} f(y, \xi) = \int_{\xi \in \Xi} f(y, \xi) P(d \xi)\right]
 \end{equation}
-
-Assuming that the objective function $F(y)$ in (\ref{smooth-stoch-opt-problem:eq}) is differentiable and bounded from below, i.e., $\inf_{y \in Y} F(y) > -\infty$, we obtain the continuous representation of (\ref{global-sq-fn-expansion:eq}):
-
+with 
 \begin{equation}
     \label{smooth-stoch-fn-expansion:eq}
-        F(y) = F(y_1, \ldots, y_k) = \mathbb{E}_{\xi} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r = \int \min_{1 \leq k \leq K} d(\xi_i, y_k)^r P(d \xi)
+        f(y, \xi) =  \min_{1 \leq k \leq K} d(\xi, y_k)^r, 
 \end{equation}
-
-\noindent where the random variable $\xi$ may have a multimodal continuous distribution. The empirical approximation is:
-
+\noindent where the random variable $\xi$ may have a multimodal continuous distribution. The empirical approximation of $F(y)$ in (\ref{smooth-stoch-opt-problem:eq}) is:
 \begin{equation}
     \label{empirical-stoch-fn-expansion:eq}
         F_N(y) = \frac{1}{N} \sum_{i=1}^N \min_{1 \leq k \leq K} d(\xi_i, y_k)^r
 \end{equation}
-
-\noindent where $\{\xi_i, i = 1, \ldots, N\}$ are independent, identically distributed initial samples of the random variable $\xi$. If $K = 1$ and $Y$ is convex, then problem (\ref{global-sq-objective-fn:eq}) is unimodal and reduces to a convex stochastic optimization problem:
-
+\noindent where $\{\xi_i, i = 1, \ldots, N\}$ are independent, identically distributed initial samples of the random variable $\xi$. If $K = 1$, $Y$ is convex, and $r\geq 1$, then problem (\ref{global-sq-objective-fn:eq}) is unimodal and reduces to a convex stochastic optimization problem:
 \begin{equation}
     \label{convex-stoch-opt-problem:eq}
-        \min_{y \in Y} [ F(y) =  \mathbb{E}_{\tilde{i} \sim p} d(\xi_{\tilde{i}}, y) ]
+        \min_{y \in Y} [ F(y) =  \mathbb{E}_{\tilde{i} \sim p} d(\xi_{\tilde{i}}, y)^r ]
 \end{equation}
-
-However, for $K \geq 2$, the function $f(\xi_i, y) = \min_{1 \leq k \leq K} d(\xi_i, y_k), y = (y_1, \ldots, y_K)$ is non-smooth and non-convex. In terms of \cite{mikhalevich2024,Norkin_1986}, if $f(\xi, y)$ is a random generalized differentiable function, its generalized gradient set can be calculated by the chain rule:
-
+However, for $K \geq 2$, the function $f(\xi, y) = \min_{1 \leq k \leq K} d(\xi, y_k)^r, y = (y_1, \ldots, y_K)$ is non-smooth and non-convex. In terms of \cite{mikhalevich2024,Norkin_1986}, $f(\xi, y)$ is a random generalized differentiable function, its generalized gradient set can be calculated by the chain rule:
 \begin{eqnarray}
     \label{sq-objective-fn-gradient:eq}
         \partial f(\xi, y) &=& \text{conv} \{ (0, \ldots, 0, g_{k^*}, 0, \ldots, 0), \quad k^* \in S(\xi, y), \quad 0 \in \mathbb{R}^n \} \nonumber \\
@@ -88,51 +67,44 @@ However, for $K \geq 2$, the function $f(\xi_i, y) = \min_{1 \leq k \leq K} d(\x
         g_{k^*} &=& r \| \xi - y_{k^*} \|^{r - 2} (y_{k^*} - \xi)
 \end{eqnarray}
 
-The expected value function (\ref{global-sq-fn-expansion:eq}) is also generalized differentiable, and the set $\mathbb{E}_{\xi} \partial f(\xi, y)$ is a generalized gradient set of the function \cite{mikhalevich2024,Norkin_1986}. Vectors $g(\xi) = (0, \ldots, 0, g_k, 0, \ldots, 0), k \in S(\xi, y), 0 \in \mathbb{R}^n$ are stochastic generalized gradients of the function $F(y_1, \ldots, y_K)$.
-
+The expected value function (\ref{global-sq-fn-expansion:eq}) is also generalized differentiable, and the set $\mathbb{E}_{\xi} \partial f(\xi, y)$ is a generalized gradient set of the function $F$ \cite{mikhalevich2024,Norkin_1986}. Vectors $g(\xi) = (0, \ldots, 0, g_k, 0, \ldots, 0), k \in S(\xi, y), 0 \in \mathbb{R}^n$, are stochastic generalized gradients of the function $F(y_1, \ldots, y_K)$.
 \begin{algorithm}
     \caption{Stochastic Quantization}\label{sq:alg}
     \begin{algorithmic}[1]
     \Require $ \{ \xi_i, \quad i = 1, \ldots, I \}, \rho, K, T, r $
     \State $ y_0 = \{ y_k, \quad k = 1, \ldots, K \} $ \Comment{Initialize centers}
     \For{$ t \in [0, T - 1] $}
-        \State $ \tilde{\xi} \in \{ \xi_i, \quad i = 1, \ldots, I \} $ \Comment{Sample element from feature set}
+        \State $ \tilde{\xi} \in \{ \xi_i, \quad i = 1, \ldots, I \} $ \Comment{Sample an element from the feature set}
         \State $ y_k^{(t)}, k_t = S(\tilde{\xi}, y_t) $ \Comment{Find the nearest center}
-        \State $ g_k^{(t)} = r \| \tilde{\xi} - y_k^{(t)} \|^{r - 2} (y_k^{(t)} - \tilde{\xi}) $ \Comment{Calculate gradient}
-        \State $ y_k^{(t)} := \pi_Y (y_k^{(t)} - \rho g_k^{(t)}) $ \Comment{Update nearest center}
+        \State $ g_k^{(t)} = r \| \tilde{\xi} - y_k^{(t)} \|^{r - 2} (y_k^{(t)} - \tilde{\xi}) $ \Comment{Calculate a gradient}
+        \State $ y_k^{(t)} := \pi_Y (y_k^{(t)} - \rho g_k^{(t)}) $ \Comment{Update the nearest center}
     \EndFor
     \end{algorithmic}
 \end{algorithm}
 
 These gradients can be utilized to find the optimal element $y_{k^*}$ in a feature set $\Xi$ using Stochastic Gradient Descent (SGD) \cite{ermoliev1976stochastic,kiefer1952stochastic,Norkin_Kozyriev_Norkin_2024,Robbins_Monro_1951}:
-
 \begin{equation}
     \label{sgd-update-rule:eq}
-        y_{k+1} = \pi_Y (y_k - \rho_k g_{k^*}), \quad \pi_Y (x) = \argmin_{y \in Y} \| x - y\|, \quad y^0 \in Y, \quad k \in \mathbb{N}
+        y_{k+1} = \pi_Y (y_k - \rho_k g_{k^*}), \quad \pi_Y (x) = \argmin_{y \in Y} \| x - y\|, \quad y^0 \in Y, \quad k \in \mathbb{N},
 \end{equation}
-
 \noindent where $\rho_k > 0$ is a learning rate parameter, and $\pi_Y$ is the projection operator onto the set $Y$. The iterative process (\ref{sq-objective-fn-gradient:eq})-(\ref{sgd-update-rule:eq}) for finding the optimal element is summarized in Algorithm \ref{sq:alg}. While SGD is an efficient local optimization algorithm, the ultimate task is to find global minima of (\ref{global-sq-objective-fn:eq}). The research in \cite{Norkin_Pflug_Ruszczynski_1998} proposes a stochastic branch and bound method applicable to the optimization algorithm (\ref{sgd-update-rule:eq}). The idea is to sequentially partition the initial problem into regions (with constraint set $Y_1 \times \ldots \times Y_K$) and use upper and lower bounds to refine partitions with the so-called interchanges relaxation to obtain lower bounds:
-
 \begin{eqnarray}
     \label{sq-branch-bound:eq}
-        \sum_{i=1}^I p_i \min_{1 \leq k \leq K} d(\xi_i, \pi_{Y_k} (\xi_i))^r
-        &\leq& \sum_{i=1}^I p_i \min_{y \in Y^K} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r \nonumber \\
-        &\leq& \min_{\{ y_k \in Y_k \}} F(y_1, \ldots, y_K)
+				\min_{\{ y_k \in Y_k \}} F(y_1, \ldots, y_K)
+        &\geq& \sum_{i=1}^I p_i \min_{y \in Y_1\times\ldots\times Y_K} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r \nonumber\\
+				&\geq& \sum_{i=1}^I p_i \min_{1 \leq k \leq K} d(\xi_i, \pi_k(\xi_i)^r. 
 \end{eqnarray}
 
-The local convergence conditions of the stochastic generalized gradient method for solving problem (\ref{global-sq-objective-fn:eq}) are determined in Theorem \ref{Theorem 1}, with the proof provided in the works of \cite{Ermoliev_Norkin_2003} and \cite{Ermolev_Norkin_1998}.
-
+The local convergence conditions of the stochastic generalized gradient method for solving problem (\ref{global-sq-objective-fn:eq}) are determined in Theorem \ref{Theorem 1}, with the proof provided in \cite{Ermoliev_Norkin_2003,Ermolev_Norkin_1998}.
 \begin{theorem}
     \label{Theorem 1} \cite{Ermoliev_Norkin_2003,Ermolev_Norkin_1998}. Consider the iterative sequence $ \{ y^{(t)} = (y_1^{(t)}, \ldots, y_K^{(t)}) \} $:
-
     \begin{align}
         \label{sq-iter:eq}
             y_k^{(t)} &:= \pi_Y (y_k^{(t)} - \rho_t g_k^{(t)}) & k^{(t)} &= S(\tilde{\xi}^{(t)}, y^{(t)}) & t &= 0, 1, 2, \ldots \nonumber \\
-            g_k^{(t)} &= r \| \tilde{\xi} - y_k^{(t)} \|^{r - 2} (y_k^{(t)} - \tilde{\xi}) & k &\in \{ 1, \ldots, K \}
+            g_k^{(t)} &= r \| \tilde{\xi}^{(t)} - y_k^{(t)} \|^{r - 2} (y_k^{(t)} - \tilde{\xi}^{(t)}) & k &\in \{ 1, \ldots, K \}
     \end{align}
 
     Assume that $ \{ \tilde{\xi}^{(t)} = \tilde{\xi}_{k^{(t)}} \} $ are independent sample points from the set $ \{ \xi_i, i = 1, \ldots, I \} $ taken with probabilities $ \{ p_i, i = 1, \ldots, I \} $:
-
     \begin{equation}
         \label{sq-convergence-cond:eq}
             \rho_t > 0, \quad \sum_{t=0}^{\infty} \rho_t = \infty, \quad \sum_{t=0}^{\infty} \rho_t^2 < \infty
@@ -141,54 +113,44 @@ The local convergence conditions of the stochastic generalized gradient method f
     Let $ F(Y^*) $ denote the set of values of $ F $ on critical (stationary) points $ Y^* $ of problem (\ref{global-sq-objective-fn:eq}), where $ Y^* = \{ y = (y_1, \ldots, y_K): \partial F(y) \in N_Y (y_1) \times \ldots \times N_Y (y_K) \} $ and $ N_Y (y_k) $ represents the normal cone to the set $ Y $ at point $ y_k $. If $ F(Y^*) $ does not contain intervals and the sequence $ \{ y^{(t)} \} $ is bounded, then $ \{ y^{(t)} \} $ converges to a connected component of $ Y^* $, and the sequence $ \{ F(y^{(t)}) \} $ has a limit.
 \end{theorem}
 
-\subsection{Adaptive Stochastic Quantization}
-
+\subsection{Adaptive Stochastic Quantization} \label{adap-stoch-quant:sec}
 The minimization of the objective function (\ref{global-sq-objective-fn:eq}) is a non-smooth, non-convex, multiextremal, large-scale stochastic optimization problem. Although the parameter update recurrent sequence based on SGD (\ref{sgd-update-rule:eq}) can converge under conditions (\ref{sq-convergence-cond:eq}), Qian et al. \cite{qian2020} demonstrated that the variance of gradient oscillations increases proportionally to the size of training samples:
-
 \begin{equation}
     \label{sgd-oscillations:eq}
         \mathbb{V} (g_{\mathcal{B}_k}) \propto \frac{I^2}{b} \mathbb{V} (g_k)
 \end{equation}
-
 \noindent where $\mathbb{V}$ represents the variance over a set, $g_{\mathcal{B}_k} = \frac{1}{b} \sum_{i=1}^{b} g_i (\xi_{\mathcal{B}_i})$ is the averaged gradient value over a subset $\xi_{\mathcal{B}_i} \subset \Xi$, and $b = | \xi_{\mathcal{B}_i} |$. These gradient oscillations reduce the algorithm's stability and slow down the convergence speed. While strategies such as manually tuned learning rate $\rho > 0$, annealing schedules \cite{Robbins_Monro_1951}, or averaged gradient over a subset can improve convergence stability, the slow convergence speed in high-dimensional models \cite{Norkin_Kozyriev_Norkin_2024} remains a significant drawback of the SGD algorithm.
 
-Polyak \cite{Poliak_1987} proposed the Momentum Gradient Descent (or the "Heavy Ball Method") as an alternative modification to the SGD by introducing an acceleration multiplier $0 < \gamma < 1$ to the recurrent sequence (\ref{sgd-update-rule:eq}), using a physical analogy of the motion of a body under the force of friction:
-
+Polyak \cite{Poliak_1987} proposed the Momentum Gradient Descent (or the ''Heavy Ball Method'') as an alternative modification to the SGD by introducing an acceleration multiplier $0 < \gamma < 1$ to the recurrent sequence (\ref{sgd-update-rule:eq}), using a physical analogy of the motion of a body under the force of friction:
 \begin{equation}
     \label{momentum-update-rule:eq}
         y_{k+1} = y_k + \gamma (y_k - y_{k-1}) - \rho_k g_{k^*}
 \end{equation}
 
-Nesterov \cite{nesterov1983method,walkington_2023} further improved the modified recurrent sequence (\ref{momentum-update-rule:eq}) by introducing an extrapolation step for parameter estimation:
-
+Nesterov \cite{nesterov1983method,walkington_2023} further improved the modified recurrent sequence (\ref{momentum-update-rule:eq}) by introducing an extrapolation step for parameter estimation (Nesterov Accelerated Gradient or NAG):
 \begin{equation}
     \label{nag-update-rule:eq}
         \tilde{y}_k = y_k - \rho_k g_{k^*}, \quad y_{k+1} = \tilde{y}_k + \gamma (\tilde{y}_k - \tilde{y}_{k-1})
 \end{equation}
 
-Although modifications (\ref{momentum-update-rule:eq}) and (\ref{nag-update-rule:eq}) can improve convergence speed, they often encounter the vanishing gradient problem on sparse data \cite{Bottou_Curtis_Nocedal_2018}. The root cause is the fixed learning rate value, which performs equal updates for both significant and insignificant model parameters. Duchi et al. \cite{Duchi_2011} address this issue by introducing an adaptive learning rate $\tilde{\rho}_k = \rho_k / \sqrt{G_k + \varepsilon}$, where the hyperparameter value is normalized over the accumulated gradient value to increase the update for more significant parameters:
-
+Although modifications (\ref{momentum-update-rule:eq}) and (\ref{nag-update-rule:eq}) can improve convergence speed, they often encounter the vanishing gradient problem on sparse data \cite{Bottou_Curtis_Nocedal_2018}. The root cause is the fixed learning rate value, which performs equal updates for both significant and insignificant model parameters. Duchi et al. \cite{Duchi_2011} address this issue by introducing an adaptive learning rate $\tilde{\rho}_k = \rho_k / \sqrt{G_k + \varepsilon}$, where the hyperparameter value is normalized over the accumulated gradient value to increase the update for more significant parameters (AdaGrad):
 \begin{equation}
     \label{adagrad-update-rule:eq}
         y_{k+1} = y_k - \frac{\rho_k}{\sqrt{G_k + \varepsilon}} g_{k^*}
 \end{equation}
+\noindent where $G_k = G_{k-1} + g_{k^*}^2$ is a linear combination of accumulated gradients from previous iterations, and $\varepsilon \ll 10^{-8}$ is a denominator smoothing term. While approach (\ref{adagrad-update-rule:eq}) solves the convergence issue on sparse data, it introduces the problem of uncontrollable vanishing of the learning rate with each iteration, i.e., $\lim_{k \to \infty} | \tilde{\rho}_k | = 0$. Tieleman et al. \cite{tieleman2012rmsprop} proposed another approach (RMSProp) for accumulated gradient normalization using a moving average $G_k = \beta G_{k-1} + (1 - \beta) g_{k^*}^2$, which substitutes the denominator $G_k$ with a stochastic approximation of the expected value $\mathbb{E} G_k$ to control learning rate vanishing with an averaging multiplier $0 < \beta < 1$.
 
-\noindent where $G_k = G_{k-1} + g_{k^*}^2$ is a linear combination of accumulated gradients from previous iterations, and $\varepsilon \ll 10^{-8}$ is a denominator smoothing term. While approach (\ref{adagrad-update-rule:eq}) solves the convergence issue on sparse data, it introduces the problem of uncontrollable vanishing of the learning rate with each iteration, i.e., $\lim_{k \to \infty} \| \tilde{\rho}_k \| = 0$. Tieleman et al. \cite{tieleman2012rmsprop} proposed another approach for accumulated gradient normalization using a moving average $G_k = \beta G_{k-1} + (1 - \beta) g_{k^*}^2$, which substitutes the denominator $G_k$ with a stochastic approximation of the expected value $\mathbb{E} G_k$ to control learning rate vanishing with an averaging multiplier $0 < \beta < 1$.
-
-Kingma et al. \cite{kingma2017adam} introduced a further modification to (\ref{adagrad-update-rule:eq}) by adding adaptive estimation of the gradient value $g_{k^*}$:
-
+Kingma et al. \cite{kingma2017adam} introduced a further modification to (\ref{adagrad-update-rule:eq}) by adding adaptive estimation of the gradient value $g_{k^*}$ (ADAM):
 \begin{eqnarray}
     \label{adam-update-rule:eq}
         m_k = \beta_1 m_{k-1} + (1 - \beta_1) g_k \nonumber \\
         v_k = \beta_2 v_{k-1} + (1 - \beta_2) g_k^2 \nonumber \\
         y_{k+1} = y_k - \frac{\rho_k}{\sqrt{v_k + \varepsilon}} m_k
 \end{eqnarray}
-
 \noindent where $m_k$ is the adaptive first moment (expected value) estimation, $v_k$ is the adaptive second moment (variance) estimation, and $0 < \beta_1 < 1, 0 < \beta_2 < 1$ are averaging multipliers. It is important to note that the values $m_i$ and $v_i$ may be biased (i.e., the expected value of the parameter does not equal the value itself), which can cause unexpected behavior in the oscillation's variance. The authors proposed corrected estimations for (\ref{adam-update-rule:eq}) as:
-
 \begin{equation}
     \label{adam-corrected-estimations:eq}
         \bar{m}_k = \frac{m_k}{1 - \beta_1}, \quad \bar{v}_k = \frac{v_k}{1 - \beta_2}
 \end{equation}
 
-Norkin et al. \cite{Norkin_Kozyriev_Norkin_2024} provide a comprehensive overview of these adaptive parameter update strategies and present a detailed comparison of their convergence speed in various problem settings.
+Norkin et al. \cite{Norkin_Kozyriev_Norkin_2024} provide an overview of these adaptive parameter update strategies and present a detailed comparison of their convergence speed in various problem settings.

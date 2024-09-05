@@ -44,7 +44,8 @@ non-convex optimization, deep metric learning, data compression
 This repository contains both software (source code) and an academic manuscript. Different licensing terms apply to 
 these components as follows:
  1. Source Code: All source code contained in this repository, unless otherwise specified, is licensed under the MIT 
-License. The full text of the MIT License can be found in the file [LICENSE.code.md](./code/LICENSE.code.md) in the `code` directory.
+License. The full text of the MIT License can be found in the file [LICENSE.code.md](./code/LICENSE.code.md) in the
+`code` directory.
  2. Academic Manuscript: The academic manuscript, including all LaTeX source files and associated content (e.g. 
 figures), is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License 
 (CC BY-NC-ND 4.0). The full text of the CC BY-NC-ND 4.0 License can be found in the file 
