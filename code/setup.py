@@ -31,8 +31,10 @@ if __name__ == "__main__":
         url="https://github.com/kaydotdev/stochastic-quantization",
         platforms="Any",
         scripts=[],
+        python_requires=">=3.8",
         packages=find_packages(exclude=["tests", "notebooks"]),
         classifiers=[
+            "Development Status :: 3 - Alpha",
             "Intended Audience :: Science/Research",
             "Intended Audience :: Education",
             "Natural Language :: English",
@@ -44,6 +46,7 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
         ],
         keywords=[
             "stochastic quantization",
