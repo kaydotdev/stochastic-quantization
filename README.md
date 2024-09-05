@@ -4,12 +4,12 @@
 [![Open paper in Colab](https://img.shields.io/badge/Colab-F9AB00?logo=googlecolab&color=525252)](https://colab.research.google.com/github/kaydotdev/stochastic-quantization/blob/master/code/notebooks/simlearning.ipynb)
 [![Open paper in Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?logo=Kaggle&logoColor=white)](https://www.kaggle.com/notebooks/welcome?src=https://github.com/kaydotdev/stochastic-quantization/blob/master/code/notebooks/simlearning.ipynb)
 
-by Vladimir Norkin<sup>1,2</sup>, [Anton Kozyriev](mailto:a.kozyriev@kpi.ua)<sup>1</sup>
+by [Anton Kozyriev](mailto:a.kozyriev@kpi.ua)<sup>1</sup>, [Vladimir Norkin](mailto:v.norkin@kpi.ua)<sup>1,2</sup>
 
  - Igor Sikorsky Kyiv Polytechnic Institute, National Technical University of Ukraine, Kyiv, 03056, Ukraine
  - V.M.Glushkov Institute of Cybernetics, National Academy of Sciences of Ukraine, Kyiv, 03178, Ukraine
 
-21 page, 5 figures, to be published in the [International Scientific Technical Journal "Problems of Control and 
+20 pages, 5 figures, to be published in the [International Scientific Technical Journal "Problems of Control and 
 Informatics"](https://jais.net.ua/)
 
 ## Categories
