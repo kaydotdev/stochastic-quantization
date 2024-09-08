@@ -1,12 +1,8 @@
 # Manages building, testing, and cleaning the code as well as running the code
 # to generate the results and figures for the paper.
 
-PACKAGE_NAME = sq
-TEST_DIR = tests
-
 
 .PHONY: all
-#
 all: build test
 
 .PHONY: clean
