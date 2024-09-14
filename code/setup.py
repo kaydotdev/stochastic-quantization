@@ -32,7 +32,7 @@ if __name__ == "__main__":
         platforms="Any",
         scripts=[],
         python_requires=">=3.8",
-        packages=find_packages(exclude=["tests", "notebooks"]),
+        packages=find_packages(exclude=["tests", "tests.*"]),
         classifiers=[
             "Development Status :: 3 - Alpha",
             "Intended Audience :: Science/Research",
