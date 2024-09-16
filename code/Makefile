@@ -19,4 +19,5 @@ build:
 .PHONY: test
 # Run the test suite with built-in 'unittest' package
 test:
-	@echo "TODO testing"
+	python -m unittest tests/test_calculate_loss.py
+	python -m unittest tests/test_find_nearest_element.py
