@@ -106,7 +106,7 @@ Let $N_k^{\,t}$ denote the number of elements in $I_k^{\,t} \neq \emptyset$ at i
 Let $\tilde{\xi}^t$ denote a point sampled from the set $\{\xi_i,\;i=1,2,\ldots,I\}$, where $t$ represents the iteration number. We define a stochastic generalized gradient $\tilde{g}(y) = (g_k(y), k = 1, ..., K)$ as follows:
 
 \begin{equation}
-    \label{eq:stoch-lloyd-grad-component}
+    \label{stoch-lloyd-grad-component:eq}
     \tilde{g}_k(y) = \begin{cases}
         r\|y_{k} - \tilde{\xi}^t\|^{r-2} (y_{k} - \tilde{\xi}^t), & k \in S(\tilde{\xi}^t,y),\\
         0, & k \notin S(\tilde{\xi}^t,y)
@@ -116,7 +116,7 @@ Let $\tilde{\xi}^t$ denote a point sampled from the set $\{\xi_i,\;i=1,2,\ldots,
 \noindent where $S(\tilde{\xi}^t,y) = \argmin_{1 \leq k \leq K} \| y_k - \tilde{\xi}^t \|$. The stochastic generalized gradient method for solving the problem (\ref{lloyd-update-step:eq}) is formulated as:
 
 \begin{equation}
-    \label{eq:stoch-lloyd-gen-grad}
+    \label{stoch-lloyd-gen-grad:eq}
     y_k^{t+1} = y_k^t - \rho_t \tilde{g}_k(y^t) = \begin{cases}
         y_k^t - \rho_t r\|y_k^t - \xi_i\|^{r-2}(y_k^t - \xi_i), & k \in S(\tilde{\xi}^t,y^t), \\
         y_k^t, & k \notin S(\tilde{\xi}^t,y^t)
