@@ -1,8 +1,8 @@
 # Robust Clustering on High-Dimensional Data with Stochastic Quantization
 
 [![Arxiv](https://img.shields.io/badge/arXiv-2409.02066-B21A1B)](https://doi.org/10.48550/arXiv.2409.02066)
-[![Open In Colab](https://img.shields.io/badge/Colab-F9AB00?logo=googlecolab&color=525252)](https://colab.research.google.com/github/kaydotdev/stochastic-quantization/blob/master/code/notebooks/simlearning.ipynb)
-[![Open In Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?logo=Kaggle&logoColor=white)](https://www.kaggle.com/notebooks/welcome?src=https://github.com/kaydotdev/stochastic-quantization/blob/master/code/notebooks/simlearning.ipynb)
+[![Open In Colab](https://img.shields.io/badge/Colab-F9AB00?logo=googlecolab&color=525252)](https://colab.research.google.com/github/kaydotdev/stochastic-quantization/blob/master/code/notebooks/quantization.ipynb)
+[![Open In Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?logo=Kaggle&logoColor=white)](https://www.kaggle.com/notebooks/welcome?src=https://github.com/kaydotdev/stochastic-quantization/blob/master/code/notebooks/quantization.ipynb)
 
 by [Anton Kozyriev](mailto:a.kozyriev@kpi.ua)<sup>1</sup>, [Vladimir Norkin](mailto:v.norkin@kpi.ua)<sup>1,2</sup>
 
