@@ -9,7 +9,7 @@ all: build test
 # Remove all processing artifacts, build files and cache files
 clean:
 	find . -name "*.pyc" -exec rm -v {} \;
-	rm -rvf build dist MANIFEST *.egg-info __pycache__ .coverage .cache
+	rm -rvf build dist MANIFEST *.egg-info __pycache__ .coverage .cache */.ipynb_checkpoints
 
 .PHONY: build
 # Build `sq` package and install in the local environment
