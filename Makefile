@@ -12,5 +12,6 @@ all:
 .PHONY: clean
 # Remove all artifacts from source code and manuscript
 clean:
+	rm -rvf data/* results/*
 	make -C code clean
 	make -C manuscript clean

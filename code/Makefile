@@ -1,9 +1,8 @@
-# Manages building, testing, and cleaning the code as well as running the code
-# to generate the results and figures for the paper.
+# Manages building, testing, and producing results and figures for the paper.
 
 
 .PHONY: all
-all: build test
+all: build test results
 
 .PHONY: clean
 # Remove all processing artifacts, build files and cache files
@@ -21,3 +20,23 @@ build:
 test:
 	python -m unittest tests/test_calculate_loss.py
 	python -m unittest tests/test_find_nearest_element.py
+
+.PHONY: results
+# Run Jupyter Notebook and save produced figures and other artifacts
+results:
+	jupyter nbconvert --to markdown ./notebooks/quantization.ipynb
+	@rm ./notebooks/quantization.md
+	@if [ ! -d ../results/figures ]; then \
+		mkdir -p ../results/figures; \
+	fi
+	@( \
+		NB_SOURCE_FILENAMES="quantization_11_0.png quantization_21_0.png quantization_23_0.png quantization_29_0.png"; \
+		NB_RESULT_FILENAMES="dataset.png latent_space.png sq_convergence_full_dataset.png sq_quants.png"; \
+		i=1; \
+		for src in $$NB_SOURCE_FILENAMES; do \
+			res=$$(echo $$NB_RESULT_FILENAMES | cut -d' ' -f$$i); \
+			mv "./notebooks/quantization_files/$$src" "../results/figures/$$res"; \
+			i=$$((i + 1)); \
+		done; \
+	)
+	@rm -rf ./notebooks/quantization_files
