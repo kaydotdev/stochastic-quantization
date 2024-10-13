@@ -46,7 +46,7 @@ Clone the repository (alternatively, you can download the source code as a
 [zip archive](https://github.com/kaydotdev/stochastic-quantization/archive/refs/heads/master.zip)):
 
 ```shell
-git clone git@github.com:kaydotdev/stochastic-quantization.git
+git clone https://github.com/kaydotdev/stochastic-quantization.git
 cd stochastic-quantization
 ```
 
