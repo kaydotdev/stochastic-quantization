@@ -24,13 +24,13 @@ test:
 .PHONY: results
 # Run Jupyter Notebook and save produced figures and other artifacts
 results:
-	jupyter nbconvert --to markdown ./notebooks/quantization.ipynb
+	jupyter nbconvert --to markdown --execute ./notebooks/quantization.ipynb
 	@rm ./notebooks/quantization.md
 	@if [ ! -d ../results/figures ]; then \
 		mkdir -p ../results/figures; \
 	fi
 	@( \
-		NB_SOURCE_FILENAMES="quantization_11_0.png quantization_21_0.png quantization_23_0.png quantization_29_0.png"; \
+		NB_SOURCE_FILENAMES="quantization_9_0.png quantization_19_0.png quantization_21_0.png quantization_27_0.png"; \
 		NB_RESULT_FILENAMES="dataset.png latent_space.png sq_convergence_full_dataset.png sq_quants.png"; \
 		i=1; \
 		for src in $$NB_SOURCE_FILENAMES; do \
