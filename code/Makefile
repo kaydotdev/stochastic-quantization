@@ -2,7 +2,7 @@
 
 
 .PHONY: all
-all: build test results
+all: install test results
 
 .PHONY: clean
 # Remove all processing artifacts, build files and cache files
@@ -10,9 +10,9 @@ clean:
 	find . -name "*.pyc" -exec rm -v {} \;
 	rm -rvf build dist MANIFEST *.egg-info __pycache__ .coverage .cache */.ipynb_checkpoints
 
-.PHONY: build
+.PHONY: install
 # Build `sq` package and install in the local environment
-build:
+install:
 	pip install --no-deps -e .
 
 .PHONY: test
