@@ -18,8 +18,7 @@ install:
 .PHONY: test
 # Run the test suite with built-in 'unittest' package
 test:
-	python -m unittest tests/test_calculate_loss.py
-	python -m unittest tests/test_find_nearest_element.py
+	python -m unittest discover -s tests -p "test_*.py"
 
 .PHONY: results
 # Run Jupyter Notebook and save produced figures and other artifacts

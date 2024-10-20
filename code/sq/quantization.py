@@ -78,10 +78,6 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             Verbosity mode.
         """
 
-        self.loss_history_ = []
-        self.n_iter_ = 0
-        self.cluster_centers_ = np.array([])
-
         self.optim = optim
         self.n_clusters = n_clusters
         self.max_iter = max_iter
@@ -115,6 +111,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
         random_state = check_random_state(self.random_state)
         X_len, X_dims = X.shape
+
+        if not X_len:
+            raise ValueError("The input tensor X should not be empty.")
 
         match self.init:
             case StochasticQuantizationInit.SAMPLE:
