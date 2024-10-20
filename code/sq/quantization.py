@@ -93,6 +93,26 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         self.verbose = verbose
 
     def fit(self, X: np.ndarray, y=None):
+        """Search optimal values of {yₖ} using numeric iterative sequence, that updates parameters {yₖ} based on the
+        calculated gradient value of a norm between sampled ξᵢ and the nearest element yₖ:
+
+            1. k⁽ᵗ⁾ ∈ S(ξ̃⁽ᵗ⁾,y⁽ᵗ⁾) = argmin₁≤k≤K d(ξ̃⁽ᵗ⁾, yₖ⁽ᵗ⁾), t=0,1,…;
+            2. gₖ⁽ᵗ⁾ = { r ‖ ξ̃⁽ᵗ⁾ - yₖ⁽ᵗ⁾ ‖ʳ⁻² (yₖ⁽ᵗ⁾ - ξ̃⁽ᵗ⁾), if k = k⁽ᵗ⁾; 0, if k ≠ k⁽ᵗ⁾;
+            3. yₖ⁽ᵗ⁺¹⁾ = πY(yₖ⁽ᵗ⁾ - ρₜgₖ⁽ᵗ⁾), k=1,…,K;
+
+        Parameters
+        ----------
+        X : np.ndarray
+            The input tensor containing training element {ξᵢ}.
+        y : None
+            Ignored. This parameter exists only for compatibility with estimator interface.
+
+        Returns
+        -------
+        self : object
+            Returns the instance itself.
+        """
+
         random_state = check_random_state(self.random_state)
         X_len, X_dims = X.shape
 
@@ -163,6 +183,24 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         return self
 
     def predict(self, X: np.ndarray):
+        """Predict the closest optimal quant {yₖ} each sample in X belongs to.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            New data to predict.
+
+        Returns
+        -------
+        labels : np.ndarray
+            Index of the optimal quant each sample belongs to.
+
+        Raises
+        ------
+        NotFittedError
+            If the attributes are not found.
+        """
+
         check_is_fitted(self)
 
         pairwise_distance = np.linalg.norm(
