@@ -44,7 +44,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         *,
         n_clusters: Union[int, np.uint] = 2,
         max_iter: Union[int, np.uint] = 1,
-        init: StochasticQuantizationInit = StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
+        init: Union[
+            StochasticQuantizationInit, np.ndarray
+        ] = StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
         learning_rate: Union[float, np.float64] = 0.001,
         rank: Union[int, np.uint] = 3,
         tol: Optional[Union[float, np.float64]] = None,
@@ -62,8 +64,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         max_iter : int or np.uint, default=1
             Maximum number of iterations for the algorithm to converge. In a single iteration, the algorithm samples
             all elements from {ξᵢ} uniformly. Must be greater than or equal to 1.
-        init : StochasticQuantizationInit, default=StochasticQuantizationInit.K_MEANS_PLUS_PLUS
-            Initialization strategy for {yₖ} elements in quantized distribution.
+        init : StochasticQuantizationInit or np.ndarray, default=StochasticQuantizationInit.K_MEANS_PLUS_PLUS
+            Initialization strategy for {yₖ} elements in quantized distribution. Optionally, elements {yₖ} can be
+            provided manually.
         learning_rate : float or np.float64, default=0.001
             The learning rate parameter ρ, which determines the convergence speed and stability of the algorithm. Must
             be greater than 0.
@@ -107,6 +110,16 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         -------
         self : object
             Returns the instance itself.
+
+        Raises
+        ------
+        ValueError
+            If the input tensor {ξᵢ} does not contain any elements.
+        ValueError
+            If dimensions of initial quantized distribution {y₀} and input tensor {ξᵢ} do not match.
+        ValueError
+            The number of elements in the initial quantized distribution {y₀} does not match the number of optimal
+            quants in the class constructor.
         """
 
         random_state = check_random_state(self.random_state)
@@ -116,6 +129,22 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             raise ValueError("The input tensor X should not be empty.")
 
         match self.init:
+            case _ if isinstance(self.init, np.ndarray):
+                init_len, init_dims = self.init.shape
+
+                if init_dims != X_dims:
+                    raise ValueError(
+                        f"The dimensions of initial quantized distribution ({init_len}) and input tensor "
+                        f"({X_dims}) must match."
+                    )
+
+                if init_len != self.n_clusters:
+                    raise ValueError(
+                        f"The number of elements in the initial quantized distribution ({init_len}) should match the "
+                        f"given number of optimal quants ({self.n_clusters})."
+                    )
+
+                self.cluster_centers_ = self.init
             case StochasticQuantizationInit.SAMPLE:
                 random_indices = random_state.choice(
                     X_len, size=self.n_clusters, replace=False
@@ -148,6 +177,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                         (self.cluster_centers_, next_centroid)
                     )
 
+        if self.verbose:
+            print("Initialization complete")
+
         self.n_iter_ = 0
         self.loss_history_ = [calculate_loss(X, self.cluster_centers_)]
         self.optim.reset()
@@ -174,10 +206,17 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                 self.tol is not None
                 and self.loss_history_[-1] - current_loss < self.tol
             ):
+                if self.verbose:
+                    print(f"Converged (small optimal quants change) at step [{self.n_iter_}/{self.max_iter * X_len}]")
                 break
 
             self.loss_history_.append(current_loss)
             self.n_iter_ += 1
+
+            if self.verbose:
+                print(
+                    f"Gradient step [{self.n_iter_}/{self.max_iter * X_len}]: loss={current_loss}"
+                )
 
         return self
 

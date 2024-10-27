@@ -44,6 +44,40 @@ class TestStochasticQuantization(unittest.TestCase):
             # act
             self.algorithm.fit(X)
 
+    def test_should_raise_value_error_if_initial_distribution_size_and_cluster_number_do_not_match(
+        self,
+    ):
+        # arrange
+        self.algorithm = StochasticQuantization(
+            SGDOptimizer(),
+            n_clusters=10,
+            max_iter=1,
+            random_state=self.random_state,
+            init=np.array([[[0.0, 0.0], [0.0, 0.0]]]),
+        )
+
+        # assert
+        with self.assertRaises(ValueError):
+            # act
+            self.algorithm.fit(self.X)
+
+    def test_should_raise_value_error_if_dimensions_of_quantized_distribution_and_input_tensor_does_not_match(
+        self,
+    ):
+        # arrange
+        self.algorithm = StochasticQuantization(
+            SGDOptimizer(),
+            n_clusters=2,
+            max_iter=1,
+            random_state=self.random_state,
+            init=np.array([[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]]),
+        )
+
+        # assert
+        with self.assertRaises(ValueError):
+            # act
+            self.algorithm.fit(self.X)
+
     def test_should_return_init_quants_if_input_tensor_contains_single_element_with_kmeans_plus_plus_init(
         self,
     ):
