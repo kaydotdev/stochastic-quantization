@@ -207,7 +207,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                 and self.loss_history_[-1] - current_loss < self.tol
             ):
                 if self.verbose:
-                    print(f"Converged (small optimal quants change) at step [{self.n_iter_}/{self.max_iter * X_len}]")
+                    print(
+                        f"Converged (small optimal quants change) at step [{self.n_iter_}/{self.max_iter * X_len}]"
+                    )
                 break
 
             self.loss_history_.append(current_loss)
