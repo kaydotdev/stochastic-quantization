@@ -82,8 +82,13 @@ class TestStochasticQuantization(unittest.TestCase):
         self,
     ):
         # arrange
-        self.algorithm.init = StochasticQuantizationInit.K_MEANS_PLUS_PLUS
-        self.algorithm.n_clusters = 1
+        self.algorithm = StochasticQuantization(
+            SGDOptimizer(),
+            n_clusters=1,
+            max_iter=1,
+            random_state=self.random_state,
+            init=StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
+        )
 
         X = np.array(
             [
@@ -102,8 +107,13 @@ class TestStochasticQuantization(unittest.TestCase):
         self,
     ):
         # arrange
-        self.algorithm.init = StochasticQuantizationInit.K_MEANS_PLUS_PLUS
-        self.algorithm.max_iter = 0
+        self.algorithm = StochasticQuantization(
+            SGDOptimizer(),
+            n_clusters=2,
+            max_iter=0,
+            random_state=self.random_state,
+            init=StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
+        )
 
         X = np.array(
             [
@@ -130,7 +140,13 @@ class TestStochasticQuantization(unittest.TestCase):
 
     def test_should_return_optimal_quants_for_sampling_strategy(self):
         # arrange
-        self.algorithm.init = StochasticQuantizationInit.SAMPLE
+        self.algorithm = StochasticQuantization(
+            SGDOptimizer(),
+            n_clusters=2,
+            max_iter=1,
+            random_state=self.random_state,
+            init=StochasticQuantizationInit.SAMPLE,
+        )
 
         expected_cluster_centers = np.array(
             [
@@ -156,7 +172,13 @@ class TestStochasticQuantization(unittest.TestCase):
         self,
     ):
         # arrange
-        self.algorithm.init = StochasticQuantizationInit.RANDOM
+        self.algorithm = StochasticQuantization(
+            SGDOptimizer(),
+            n_clusters=2,
+            max_iter=1,
+            random_state=self.random_state,
+            init=StochasticQuantizationInit.RANDOM,
+        )
 
         expected_cluster_centers = np.array(
             [
@@ -182,7 +204,13 @@ class TestStochasticQuantization(unittest.TestCase):
         self,
     ):
         # arrange
-        self.algorithm.init = StochasticQuantizationInit.K_MEANS_PLUS_PLUS
+        self.algorithm = StochasticQuantization(
+            SGDOptimizer(),
+            n_clusters=2,
+            max_iter=1,
+            random_state=self.random_state,
+            init=StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
+        )
 
         expected_cluster_centers = np.array(
             [

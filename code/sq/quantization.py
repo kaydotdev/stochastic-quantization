@@ -81,15 +81,15 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             Verbosity mode.
         """
 
-        self.optim = optim
-        self.n_clusters = n_clusters
-        self.max_iter = max_iter
-        self.init = init
-        self.learning_rate = learning_rate
-        self.rank = rank
-        self.tol = tol
-        self.random_state = random_state
-        self.verbose = verbose
+        self._optim = optim
+        self._n_clusters = n_clusters
+        self._max_iter = max_iter
+        self._init = init
+        self._learning_rate = learning_rate
+        self._rank = rank
+        self._tol = tol
+        self._random_state = random_state
+        self._verbose = verbose
 
     def fit(self, X: np.ndarray, y=None):
         """Search optimal values of {yₖ} using numeric iterative sequence, that updates parameters {yₖ} based on the
@@ -122,15 +122,15 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             quants in the class constructor.
         """
 
-        random_state = check_random_state(self.random_state)
+        random_state = check_random_state(self._random_state)
         X_len, X_dims = X.shape
 
         if not X_len:
             raise ValueError("The input tensor X should not be empty.")
 
-        match self.init:
-            case _ if isinstance(self.init, np.ndarray):
-                init_len, init_dims = self.init.shape
+        match self._init:
+            case _ if isinstance(self._init, np.ndarray):
+                init_len, init_dims = self._init.shape
 
                 if init_dims != X_dims:
                     raise ValueError(
@@ -138,25 +138,25 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                         f"({X_dims}) must match."
                     )
 
-                if init_len != self.n_clusters:
+                if init_len != self._n_clusters:
                     raise ValueError(
                         f"The number of elements in the initial quantized distribution ({init_len}) should match the "
-                        f"given number of optimal quants ({self.n_clusters})."
+                        f"given number of optimal quants ({self._n_clusters})."
                     )
 
-                self.cluster_centers_ = self.init.copy()
+                self.cluster_centers_ = self._init.copy()
             case StochasticQuantizationInit.SAMPLE:
                 random_indices = random_state.choice(
-                    X_len, size=self.n_clusters, replace=False
+                    X_len, size=self._n_clusters, replace=False
                 )
                 self.cluster_centers_ = X[random_indices]
             case StochasticQuantizationInit.RANDOM:
-                self.cluster_centers_ = random_state.rand(self.n_clusters, X_dims)
+                self.cluster_centers_ = random_state.rand(self._n_clusters, X_dims)
             case StochasticQuantizationInit.K_MEANS_PLUS_PLUS:
                 random_indices = random_state.choice(X_len, size=1, replace=False)
                 self.cluster_centers_ = np.expand_dims(X[random_indices.item()], axis=0)
 
-                for _ in range(1, self.n_clusters):
+                for _ in range(1, self._n_clusters):
                     pairwise_distance = np.min(
                         np.linalg.norm(
                             X[:, np.newaxis] - self.cluster_centers_, axis=-1
@@ -177,47 +177,47 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                         (self.cluster_centers_, next_centroid)
                     )
 
-        if self.verbose:
+        if self._verbose:
             print("Initialization complete")
 
         self.n_iter_ = 0
         self.loss_history_ = [calculate_loss(X, self.cluster_centers_)]
-        self.optim.reset()
+        self._optim.reset()
 
-        for i in range(self.max_iter):
+        for i in range(self._max_iter):
             for ksi_j in np.random.permutation(X):
                 nearest_quant, quant_ind = find_nearest_element(
                     self.cluster_centers_, ksi_j
                 )
 
                 grad_fn = (
-                    lambda x: self.rank
-                    * np.linalg.norm(ksi_j - x, ord=2) ** (self.rank - 2)
+                    lambda x: self._rank
+                    * np.linalg.norm(ksi_j - x, ord=2) ** (self._rank - 2)
                     * (x - ksi_j)
                 )
 
-                self.cluster_centers_[quant_ind, :] = self.optim.step(
-                    grad_fn, nearest_quant, self.learning_rate
+                self.cluster_centers_[quant_ind, :] = self._optim.step(
+                    grad_fn, nearest_quant, self._learning_rate
                 )
 
             current_loss = calculate_loss(X, self.cluster_centers_)
 
             if (
-                self.tol is not None
-                and self.loss_history_[-1] - current_loss < self.tol
+                self._tol is not None
+                and self.loss_history_[-1] - current_loss < self._tol
             ):
-                if self.verbose:
+                if self._verbose:
                     print(
-                        f"Converged (small optimal quants change) at step [{self.n_iter_}/{self.max_iter * X_len}]"
+                        f"Converged (small optimal quants change) at step [{self.n_iter_}/{self._max_iter * X_len}]"
                     )
                 break
 
             self.loss_history_.append(current_loss)
             self.n_iter_ += 1
 
-            if self.verbose:
+            if self._verbose:
                 print(
-                    f"Gradient step [{self.n_iter_}/{self.max_iter * X_len}]: loss={current_loss}"
+                    f"Gradient step [{self.n_iter_}/{self._max_iter * X_len}]: loss={current_loss}"
                 )
 
         return self
