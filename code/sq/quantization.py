@@ -144,7 +144,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                         f"given number of optimal quants ({self.n_clusters})."
                     )
 
-                self.cluster_centers_ = self.init
+                self.cluster_centers_ = self.init.copy()
             case StochasticQuantizationInit.SAMPLE:
                 random_indices = random_state.choice(
                     X_len, size=self.n_clusters, replace=False
