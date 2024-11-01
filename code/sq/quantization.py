@@ -211,14 +211,15 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                     grad_fn, nearest_quant, self._learning_rate
                 )
 
-                if self._verbose and not self.n_step_ % self._log_step:
+                if not self.n_step_ % self._log_step:
                     current_loss = calculate_loss(X, self.cluster_centers_)
 
                     self.loss_history_.append(current_loss)
 
-                    print(
-                        f"Gradient step [{self.n_step_}/{self._max_iter * X_len}]: loss={current_loss}"
-                    )
+                    if self._verbose:
+                        print(
+                            f"Gradient step [{self.n_step_}/{self._max_iter * X_len}]: loss={current_loss}"
+                        )
 
             current_loss = calculate_loss(X, self.cluster_centers_)
 
