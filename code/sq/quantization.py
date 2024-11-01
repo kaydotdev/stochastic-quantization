@@ -50,6 +50,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         learning_rate: Union[float, np.float64] = 0.001,
         rank: Union[int, np.uint] = 3,
         tol: Optional[Union[float, np.float64]] = None,
+        log_step: Optional[Union[int, np.uint]] = None,
         random_state: Optional[np.random.RandomState] = None,
         verbose: Union[int, np.uint] = 0,
     ):
@@ -75,10 +76,13 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         tol : float or np.float64, optional
             Relative tolerance with regard to objective function difference of two consecutive iterations to declare
             convergence. If not specified, the algorithm will run for 'max_iter' iterations.
+        log_step : int or np.uint, optional
+             The iteration interval for calculating and recording objective function value. If in verbose mode, the
+             value is printed to STDOUT. If not specified, the logging step is set to the size of the input tensor {ξᵢ}.
         random_state : np.random.RandomState, optional
             Random state for reproducibility.
         verbose : int or np.uint, default=0
-            Verbosity mode.
+            Verbosity level: 0 for silent, 1 for progress logging to STDOUT.
         """
 
         self._optim = optim
@@ -88,6 +92,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         self._learning_rate = learning_rate
         self._rank = rank
         self._tol = tol
+        self._log_step = log_step
         self._random_state = random_state
         self._verbose = verbose
 
@@ -181,11 +186,17 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             print("Initialization complete")
 
         self.n_iter_ = 0
+        self.n_step_ = 0
+        self._log_step = self._log_step or X_len
         self.loss_history_ = [calculate_loss(X, self.cluster_centers_)]
         self._optim.reset()
 
         for i in range(self._max_iter):
+            self.n_iter_ += 1
+
             for ksi_j in np.random.permutation(X):
+                self.n_step_ += 1
+
                 nearest_quant, quant_ind = find_nearest_element(
                     self.cluster_centers_, ksi_j
                 )
@@ -200,6 +211,15 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                     grad_fn, nearest_quant, self._learning_rate
                 )
 
+                if self._verbose and not self.n_step_ % self._log_step:
+                    current_loss = calculate_loss(X, self.cluster_centers_)
+
+                    self.loss_history_.append(current_loss)
+
+                    print(
+                        f"Gradient step [{self.n_step_}/{self._max_iter * X_len}]: loss={current_loss}"
+                    )
+
             current_loss = calculate_loss(X, self.cluster_centers_)
 
             if (
@@ -208,17 +228,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             ):
                 if self._verbose:
                     print(
-                        f"Converged (small optimal quants change) at step [{self.n_iter_}/{self._max_iter * X_len}]"
+                        f"Converged (small optimal quants change) at step [{self.n_step_}/{self._max_iter * X_len}]"
                     )
                 break
-
-            self.loss_history_.append(current_loss)
-            self.n_iter_ += 1
-
-            if self._verbose:
-                print(
-                    f"Gradient step [{self.n_iter_}/{self._max_iter * X_len}]: loss={current_loss}"
-                )
 
         return self
 
