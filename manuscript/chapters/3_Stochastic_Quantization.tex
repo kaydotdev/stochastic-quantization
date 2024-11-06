@@ -87,16 +87,21 @@ However, for $K \geq 2$, the function $f(\xi, y) = \min_{1 \leq k \leq K} d(\xi,
 
 \begin{eqnarray}
     \label{sq-objective-fn-gradient:eq}
-    \partial_y \,f\,(\xi, y) &=& \text{conv.hull} \left\{ \left(\underbrace{\overbrace{0, \ldots, 0, g_{k}}^k(\xi), 0, \ldots, 0}_K\right), \;\; k \in S(\xi, y), \;\; 0 \in \mathbb{R}^n \right\}, \nonumber \\
-    S(\xi, y) &=& \{ k: \| \xi - y_{k} \| = \min_{1 \leq k^{\prime} \leq K} \| \xi - y_{k^{\prime}} \| \}, \nonumber \\
-    g_{k}(\xi) &=& r \| \xi - y_{k} \|^{r - 2} (y_{k} - \xi)
+    \begin{aligned}
+        \partial_y \,f\,(\xi, y) &= \text{conv.hull} \left\{ \left(\underbrace{\overbrace{0, \ldots, 0, g_{k}}^k(\xi), 0, \ldots, 0}_K\right), \;\; k \in S(\xi, y), \;\; 0 \in \mathbb{R}^n \right\}, \\
+        S(\xi, y) &= \{ k: \| \xi - y_{k} \| = \min_{1 \leq k^{\prime} \leq K} \| \xi - y_{k^{\prime}} \| \}, \\
+        g_{k}(\xi) &= r \| \xi - y_{k} \|^{r - 2} (y_{k} - \xi)
+    \end{aligned}
 \end{eqnarray}
 
 The expected value function (\ref{global-sq-fn-expansion:eq}) is also generalized differentiable, and the set-valued mathematical expectation $\mathbb{E}_{\xi} \partial_y\, f\,(\xi, y)$ is a generalized gradient set of function $F$ \cite{mikhalevich2024,Norkin_1986}. Vectors $G(\xi) = (0, \ldots, 0, g_k, 0, \ldots, 0), \;k \in S(\xi, y), \;0 \in \mathbb{R}^n,$ are stochastic generalized gradients of the function $F(y_1, \ldots, y_K)$. These gradients can be utilized to find the optimal solution $y^{*}=(y_1^{*},\ldots,y_K^{*})$ of problems (\ref{global-sq-objective-fn:eq}), (\ref{smooth-stoch-opt-problem:eq}) using Stochastic Gradient Descent (SGD) \cite{Robbins_Monro_1951,kiefer1952stochastic,ermoliev1976stochastic,Norkin_Kozyriev_Norkin_2024} (written in coordinate-wise form):
 
 \begin{eqnarray}
-    y^{t+1}_k = \Pi_{Y} (y^t_k - \rho_t g_k(\tilde{\xi}^t)), \;\;\; \Pi_{Y} (\cdot) = \argmin_{y \in Y} \| \cdot - y\|, \label{sgd-update-rule:eq} \\
-    y^0_k \in Y, \quad k=1,\ldots,K;\quad t=0,1,\ldots, \label{sgd-update-rule2:eq}
+    \label{sgd-update-rule:eq}
+    \begin{aligned}
+        & y^{t+1}_k = \Pi_{Y} (y^t_k - \rho_t g_k(\tilde{\xi}^t)), \;\;\; \Pi_{Y} (\cdot) = \argmin_{y \in Y} \| \cdot - y\|, \\
+        & y^0_k \in Y, \quad k=1,\ldots,K;\quad t=0,1,\ldots, \label{sgd-update-rule2:eq}
+    \end{aligned}
 \end{eqnarray}
 
 \noindent where $t$ is the iteration number, $\rho_t > 0$ is a learning rate (step) parameter, and $\Pi_{Y}$ is the projection operator onto the set $Y$, $\{\tilde{\xi}^t\}$ are independent identically distributed elements of $\Xi$. The iterative process (\ref{sq-objective-fn-gradient:eq})-(\ref{sgd-update-rule:eq}) for finding the optimal element is summarized in Algorithm \ref{sq:alg}.
@@ -133,12 +138,14 @@ While SGD is an efficient local optimization algorithm, the ultimate task is to 
 
 \begin{eqnarray}
     \label{sq-branch-bound:eq}
-    \min_{\{ y_k \in Y_k \}} F(y_1, \ldots, y_K)
-    &\geq& \sum_{i=1}^I p_i \min_{y \in Y_1\times\ldots\times Y_K} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r \nonumber\\
-    &\geq& \sum_{i=1}^I p_i \min_{1 \leq k \leq K} d(\xi_i, \pi_k(\xi_i))^r, 
+    \begin{aligned}
+        \min_{\{ y_k \in Y_k \}} F(y_1, \ldots, y_K)
+        &\geq& \sum_{i=1}^I p_i \min_{y \in Y_1\times\ldots\times Y_K} \min_{1 \leq k \leq K} d(\xi_i, y_k)^r \\
+        &\geq& \sum_{i=1}^I p_i \min_{1 \leq k \leq K} d(\xi_i, \pi_k(\xi_i))^r,
+    \end{aligned}
 \end{eqnarray}
 
-where $\pi_k(\xi_i)=\Pi_{Y_k}(\xi_i)$.
+\noindent where $\pi_k(\xi_i)=\Pi_{Y_k}(\xi_i)$.
 
 \subsection{Adaptive Stochastic Quantization} \label{adap-stoch-quant:sec}
 
@@ -162,8 +169,10 @@ Nesterov \cite{nesterov1983method,walkington_2023} extended this approach by int
 
 \begin{eqnarray}
     \label{nag-update-rule:eq}
-    \tilde{y}^{\,t} &=& y^{\,t} - \rho_t g^{\,t}, \quad g^{\,t} \in \partial_y F(y^{\,t}), \\
-    y^{\,t+1} &=& \tilde{y}^{\,t} + \gamma (\tilde{y}^{\,t} - \tilde{y}^{\,t-1}), \quad t=1,2,\ldots.
+    \begin{aligned}
+        \tilde{y}^{\,t} &= y^{\,t} - \rho_t g^{\,t}, \quad g^{\,t} \in \partial_y F(y^{\,t}), \\
+        y^{\,t+1} &= \tilde{y}^{\,t} + \gamma (\tilde{y}^{\,t} - \tilde{y}^{\,t-1}), \quad t=1,2,\ldots.
+    \end{aligned}
 \end{eqnarray}
 
 Both methods (\ref{momentum-update-rule:eq}) and (\ref{nag-update-rule:eq}) have been adapted for non-convex, non-smooth optimization problems \cite{mikhalevich2024}. However, despite their improvement in convergence speed, these modifications often face the vanishing gradient problem when applied to sparse data \cite{Bottou_Curtis_Nocedal_2018}. This issue arises due to the fixed learning rate, which applies equal updates to both significant and insignificant model parameters. To address this, Duchi et al. \cite{Duchi_2011} proposed an adaptive learning rate $\tilde{\rho}_k^{t} = \rho_t / \sqrt{G_k^{\,t} + \varepsilon}$, where the learning rate is normalized over the accumulated gradient to prioritize more significant parameters. This approach, known as AdaGrad, is represented by the update rule:
@@ -179,9 +188,11 @@ Further advancements were made by Kingma et al. \cite{kingma2017adam}, who devel
 
 \begin{eqnarray}
     \label{adam-update-rule:eq}
-    m_k^{\,t} &=& \beta_1 m_k^{\,t-1} + (1 - \beta_1) g_k^{\,t}, \nonumber \\
-    v_k^{\,t} &=& \beta_2 v_k^{\,t-1} + (1 - \beta_2) \|g_k^{\,t}\|^2, \nonumber \\
-    y_k^{\,t+1} &=& y_k^{\,t} - \frac{\rho_t}{\sqrt{v_k^{\,t} + \varepsilon}} m_k^{\,t}, \quad k=1,\ldots,K,
+    \begin{aligned}
+        m_k^{\,t} &= \beta_1 m_k^{\,t-1} + (1 - \beta_1) g_k^{\,t}, \\
+        v_k^{\,t} &= \beta_2 v_k^{\,t-1} + (1 - \beta_2) \|g_k^{\,t}\|^2, \\
+        y_k^{\,t+1} &= y_k^{\,t} - \frac{\rho_t}{\sqrt{v_k^{\,t} + \varepsilon}} m_k^{\,t}, \quad k=1,\ldots,K,
+    \end{aligned}
 \end{eqnarray}
 
 \noindent where $m_k^{\,t}$ represents the adaptive estimate of the first moment (the expected gradient value), and $v_k^{\,t}$ represents the adaptive estimate of the second moment (the variance). The constants $0 < \beta_1 < 1$ and $0 < \beta_2 < 1$ are used as averaging multipliers. Although $m_k^{\,t}$ and $v_k^{\,t}$ may initially be biased, Kingma et al. introduced bias-corrected estimates:

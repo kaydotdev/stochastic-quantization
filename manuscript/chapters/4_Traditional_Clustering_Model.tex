@@ -53,8 +53,10 @@ Consider the generalized clustering problem (\ref{global-sq-objective-fn:eq})-(\
 
 \begin{eqnarray}
     \label{lloyd-update-step:eq}
-    F(y) = F(y_1, \ldots, y_K) &=& \sum_{i=1}^I p_i \min_{1 \leq k \leq K} \| y_k - \xi_i \|^r \nonumber \\
-    &=& \mathbb{E}_{i \sim p} \min_{1 \leq k \leq K} \| y_k - \xi_i \|^r \rightarrow \min_y.
+    \begin{aligned}
+        F(y) = F(y_1, \ldots, y_K) &= \sum_{i=1}^I p_i \min_{1 \leq k \leq K} \| y_k - \xi_i \|^r \\
+        &= \mathbb{E}_{i \sim p} \min_{1 \leq k \leq K} \| y_k - \xi_i \|^r \rightarrow \min_y. 
+    \end{aligned}
 \end{eqnarray}
 
 With the objective function (\ref{lloyd-update-step:eq}) being a generalized differentiable function \cite{Norkin_1986}, its optima can be found via a generalized gradient set, derived using the chain rule:
@@ -85,11 +87,13 @@ The standard (unconstrained) generalized gradient method for solving problem (\r
 
 \begin{eqnarray}
     \label{lloyd-gen-grad:eq}
-    y_k^{\,t+1} &=& y_k^{\,t} - \rho_t \,g_k(y^{\,t}) \nonumber \\
-                &=& \begin{cases}
-                    y_k^{\,t} - \rho_t \frac{r}{I} \sum_{i \in I_k^{\,t}} \|y_k^{\,t} - \xi_i\|^{r\,-2}(y_k^{\,t} - \xi_i), & I_k^{\,t} \neq \emptyset, \\
-                    y_k^{\,t}, & I_k^{\,t} = \emptyset,
-                \end{cases}
+    \begin{aligned}
+        y_k^{\,t+1} &= y_k^{\,t} - \rho_t \,g_k(y^{\,t}) \\
+                    &= \begin{cases}
+                        y_k^{\,t} - \rho_t \frac{r}{I} \sum_{i \in I_k^{\,t}} \|y_k^{\,t} - \xi_i\|^{r\,-2}(y_k^{\,t} - \xi_i), & I_k^{\,t} \neq \emptyset, \\
+                        y_k^{\,t}, & I_k^{\,t} = \emptyset,
+                    \end{cases}
+    \end{aligned}
 \end{eqnarray}
 
 \noindent where $I_k^{\,t} = \{i: \| y_k^{\,t} - \xi_i \| = \min_{1 \leq  k^{\,\prime} \leq K} \| y_{k^{\,\prime}}^{\,t}-\xi_i \| \} \quad k = 1 , \ldots , K \quad t = 0, 1 , \ldots$. Analogous to the convergence conditions in \ref{sq-convergence-cond:eq}, the generalized gradient method is guaranteed to converge under the conditions:

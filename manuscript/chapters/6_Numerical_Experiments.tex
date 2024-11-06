@@ -31,7 +31,7 @@ The Triplet Network was used to project latent representations onto $\mathbb{R}^
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{figures/sq_convergence_full_dataset.png}
+    \includegraphics[width=\textwidth]{figures/convergence/sq_convergence_100.png}
     \caption{Convergence speed comparison of Stochastic Quantization variants on latent representations of training data with 100\% labeled fraction.}
     \label{convergence:fig}
 \end{figure}
@@ -41,20 +41,20 @@ The accuracy of the trained classification models, combining Triplet Network and
 \begin{table}
 \caption{Classification accuracy comparison on MNIST dataset \cite{lecun2010mnist}.}
     \label{accuracy:table}
-    \begin{tabularx}{\textwidth}{|X|*{5}{c|}}
+    \begin{tabularx}{\textwidth}{|X|*{4}{c|}}
         \hline
-        \multirow{2}{*}{Algorithm} & \multicolumn{5}{c|}{Percentage of Training Data} \\
-        \cline{2-6}
-        & 10\% & 30\% & 60\% & 80\% & 100\% \\
+        \multirow{2}{*}{Algorithm} & \multicolumn{4}{c|}{Percentage of Training Data} \\
+        \cline{2-5}
+        & 25\% & 50\% & 75\% & 100\% \\
         \hline
-        Triplet Network + KNN         & - & - & - & - & 99.54\% \\
-        Siamese Network + KNN         & - & - & - & - & 97.90\% \\
-        Triplet Network + SQ-SGD      & 94.67\% & 98.14\% & 98.23\% & 98.17\% & 98.26\% \\
-        Triplet Network + SQ-Momentum & 92.97\% & 98.20\% & 98.26\% & 98.14\% & 98.24\% \\
-        Triplet Network + SQ-NAG      & 94.12\% & 98.15\% & 98.29\% & 98.16\% & 98.25\% \\
-        Triplet Network + SQ-AdaGrad  & 94.59\% & 98.11\% & 98.24\% & 98.18\% & 98.30\% \\
-        Triplet Network + SQ-RMSProp  & 94.34\% & 98.16\% & 98.19\% & 98.17\% & 98.27\% \\
-        Triplet Network + SQ-ADAM     & 93.01\% & 98.18\% & 98.23\% & 98.18\% & 98.25\% \\
+        Triplet Network + KNN         &    -    &    -    &    -    & 99.54\% \\
+        Siamese Network + KNN         &    -    &    -    &    -    & 97.90\% \\
+        Triplet Network + SQ-SGD      & 78.10\% & 97.74\% & 97.83\% & 98.38\% \\
+        Triplet Network + SQ-Momentum & 78.06\% & 97.73\% & 97.82\% & 98.36\% \\
+        Triplet Network + SQ-NAG      & 78.00\% & 97.63\% & 97.72\% & 98.33\% \\
+        Triplet Network + SQ-AdaGrad  & 78.95\% & 97.72\% & 97.79\% & 98.34\% \\
+        Triplet Network + SQ-RMSProp  & 79.34\% & 97.70\% & 97.80\% & 98.29\% \\
+        Triplet Network + SQ-ADAM     & 79.15\% & 97.70\% & 97.86\% & 98.29\% \\
         \hline
     \end{tabularx}
 \end{table}
