@@ -100,7 +100,7 @@ The expected value function (\ref{global-sq-fn-expansion:eq}) is also generalize
     \label{sgd-update-rule:eq}
     \begin{aligned}
         & y^{t+1}_k = \Pi_{Y} (y^t_k - \rho_t g_k(\tilde{\xi}^t)), \;\;\; \Pi_{Y} (\cdot) = \argmin_{y \in Y} \| \cdot - y\|, \\
-        & y^0_k \in Y, \quad k=1,\ldots,K;\quad t=0,1,\ldots, \label{sgd-update-rule2:eq}
+        & y^0_k \in Y, \quad k=1,\ldots,K;\quad t=0,1,\ldots
     \end{aligned}
 \end{eqnarray}
 
@@ -124,7 +124,7 @@ The local convergence conditions of the stochastic generalized gradient method f
 
 \begin{theorem}
     \label{Theorem 1}
-    \cite{Ermoliev_Norkin_2003,Ermolev_Norkin_1998}. Consider the iterative sequence $\{ y^t = (y_1^t, \ldots, y_K^t) \}$ formed according to (\ref{sgd-update-rule:eq}), (\ref{sgd-update-rule2:eq}). Let $\{ \tilde{\xi}^t,\;t=0,1,\ldots\}$ be independent sample points from the set $\{ \xi_i, i = 1, \ldots, I \}$ taken with probabilities $\{ p_i, i = 1, \ldots, I \}$; step parameters $\{\rho_t\}$ satisfy conditions:
+    \cite{Ermoliev_Norkin_2003,Ermolev_Norkin_1998}. Consider the iterative sequence $\{ y^t = (y_1^t, \ldots, y_K^t) \}$ formed according to (\ref{sgd-update-rule:eq}). Let $\{ \tilde{\xi}^t,\;t=0,1,\ldots\}$ be independent sample points from the set $\{ \xi_i, i = 1, \ldots, I \}$ taken with probabilities $\{ p_i, i = 1, \ldots, I \}$; step parameters $\{\rho_t\}$ satisfy conditions:
 
     \begin{equation}
         \label{sq-convergence-cond:eq}

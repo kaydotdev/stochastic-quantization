@@ -47,7 +47,7 @@ The initial positions of cluster centers $\{ y_k^0, \> k = 1, \ldots, K \}$ are 
 
 Subsequent cluster center positions $\{ y_1^{\,t}, \ldots, y_K^{\,t} \}$ for $t > 0$ are calculated using Lloyd's original algorithm (\ref{kmeans-group:eq})-(\ref{kmeans-center-estimation:eq}). An alternative discrete optimization-based initialization strategy for $y^{0}$ is suggested in \cite[Sec. 4, Stage 1]{Kuzmenko_Uryasev_2019}.
 
-Sculley \cite{Sculley_2010} highlighted the inefficiency of Lloyd's algorithm's update rule (\ref{kmeans-center-estimation:eq}) for large datasets, due to the time complexity $O(K \cdot I \cdot d)$ associated with the feature set $\{ \xi_i \}$, where $d$ represents the dimensionality of each sample $\xi_i$. To address this, the author proposed the Mini-Batch K-Means modification, which leverages a small random subset $\Xi^{t}\subset \Xi$ at iteration $t$ to perform the algorithm step (\ref{kmeans-center-estimation:eq}).
+Sculley \cite{Sculley_2010} highlighted the inefficiency of Lloyd's algorithm's update rule (\ref{kmeans-center-estimation:eq}) for large datasets, due to the time complexity $O(K \cdot I \cdot d)$ at each iteration $t$ for a given feature set $\{ \xi_i \}$, where $d$ represents the dimensionality of each sample $\xi_i$. To address this, the author proposed the Mini-Batch K-Means modification, which leverages a small random subset $\Xi^{t}\subset \Xi$ at iteration $t$ to perform the algorithm step (\ref{kmeans-center-estimation:eq}).
 
 Consider the generalized clustering problem (\ref{global-sq-objective-fn:eq})-(\ref{global-sq-fn-expansion:eq}) for any $r\geq 1$:
 
