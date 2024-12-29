@@ -6,7 +6,7 @@ from .optim import (
     RMSPropOptimizer,
     AdamOptimizer,
 )
-from .quantization import StochasticQuantization, StochasticQuantizationInit
+from .quantization import StochasticQuantization
 
 
 __all__ = [
@@ -17,5 +17,4 @@ __all__ = [
     "RMSPropOptimizer",
     "AdamOptimizer",
     "StochasticQuantization",
-    "StochasticQuantizationInit",
 ]

@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Optional, Union
 
 import numpy as np
@@ -8,12 +7,6 @@ from sklearn.utils.validation import check_is_fitted, check_random_state
 
 from .metric import calculate_loss, find_nearest_element
 from .optim import BaseOptimizer
-
-
-class StochasticQuantizationInit(Enum):
-    SAMPLE = "SAMPLE"
-    RANDOM = "RANDOM"
-    K_MEANS_PLUS_PLUS = "K_MEANS_PLUS_PLUS"
 
 
 class StochasticQuantization(BaseEstimator, ClusterMixin):
@@ -32,8 +25,10 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
     ----------
     loss_history_ : list
         History of objective function values corresponding to each iteration.
+
     n_iter_ : int
         Number of iterations until declaring convergence.
+
     cluster_centers_ : ndarray
         The optimal set of quantized points {y₁, …, yₖ}.
     """
@@ -44,15 +39,13 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         *,
         n_clusters: Union[int, np.uint] = 2,
         max_iter: Union[int, np.uint] = 1,
-        init: Union[
-            StochasticQuantizationInit, np.ndarray
-        ] = StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
         learning_rate: Union[float, np.float64] = 0.001,
         rank: Union[int, np.uint] = 3,
+        verbose: Union[int, np.uint] = 0,
+        init: Optional[Union[str, np.ndarray]] = None,
         tol: Optional[Union[float, np.float64]] = None,
         log_step: Optional[Union[int, np.uint]] = None,
         random_state: Optional[np.random.RandomState] = None,
-        verbose: Union[int, np.uint] = 0,
     ):
         """Initialize Stochastic Quantization solver with provided hyperparameters.
 
@@ -60,29 +53,52 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         ----------
         optim : BaseOptimizer
             Gradient search algorithm to use for finding optimal quantized distribution.
+
         n_clusters : int or np.uint, default=2
             The number of elements in tensor {yₖ} containing quantized distribution. Must be greater than or equal to 1.
+
         max_iter : int or np.uint, default=1
             Maximum number of iterations for the algorithm to converge. In a single iteration, the algorithm samples
             all elements from {ξᵢ} uniformly. Must be greater than or equal to 1.
-        init : StochasticQuantizationInit or np.ndarray, default=StochasticQuantizationInit.K_MEANS_PLUS_PLUS
-            Initialization strategy for {yₖ} elements in quantized distribution. Optionally, elements {yₖ} can be
-            provided manually.
+
         learning_rate : float or np.float64, default=0.001
             The learning rate parameter ρ, which determines the convergence speed and stability of the algorithm. Must
             be greater than 0.
+
         rank : int or np.uint, default=3
             The degree of the norm (rank) r. Must be greater than or equal to 3.
+
+        verbose : int or np.uint, default=0
+            Controls verbosity:
+
+            * 0: Silent mode.
+
+            * 1: Logs progress to STDOUT.
+
+        init : {‘k-means++’, ‘sample’, ‘random’} or np.ndarray, optional
+            Initialization strategy for the elements {yₖ} in the quantized distribution:
+
+            * np.ndarray: Use the provided array as initial elements. Must have shape (n_clusters, n_features).
+
+            * 'sample': Initialize elements by uniform sampling from {ξᵢ}.
+
+            * 'random': Initialize elements by random sampling from a uniform distribution over [0, 1).
+
+            * 'k-means++': Use an empirical probability distribution based on point contributions to inertia
+              for selecting initial centroids.
+
+            If not specified, defaults to 'k-means++'.
+
         tol : float or np.float64, optional
             Relative tolerance with regard to objective function difference of two consecutive iterations to declare
             convergence. If not specified, the algorithm will run for 'max_iter' iterations.
+
         log_step : int or np.uint, optional
              The iteration interval for calculating and recording objective function value. If in verbose mode, the
              value is printed to STDOUT. If not specified, the logging step is set to the size of the input tensor {ξᵢ}.
+
         random_state : np.random.RandomState, optional
             Random state for reproducibility.
-        verbose : int or np.uint, default=0
-            Verbosity level: 0 for silent, 1 for progress logging to STDOUT.
         """
 
         self._optim = optim
@@ -100,14 +116,17 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         """Search optimal values of {yₖ} using numeric iterative sequence, that updates parameters {yₖ} based on the
         calculated gradient value of a norm between sampled ξᵢ and the nearest element yₖ:
 
-            1. k⁽ᵗ⁾ ∈ S(ξ̃⁽ᵗ⁾,y⁽ᵗ⁾) = argmin₁≤k≤K d(ξ̃⁽ᵗ⁾, yₖ⁽ᵗ⁾), t=0,1,…;
-            2. gₖ⁽ᵗ⁾ = { r ‖ ξ̃⁽ᵗ⁾ - yₖ⁽ᵗ⁾ ‖ʳ⁻² (yₖ⁽ᵗ⁾ - ξ̃⁽ᵗ⁾), if k = k⁽ᵗ⁾; 0, if k ≠ k⁽ᵗ⁾;
-            3. yₖ⁽ᵗ⁺¹⁾ = πY(yₖ⁽ᵗ⁾ - ρₜgₖ⁽ᵗ⁾), k=1,…,K;
+        * k⁽ᵗ⁾ ∈ S(ξ̃⁽ᵗ⁾,y⁽ᵗ⁾) = argmin₁≤k≤K d(ξ̃⁽ᵗ⁾, yₖ⁽ᵗ⁾), t=0,1,…;
+
+        * gₖ⁽ᵗ⁾ = { r ‖ ξ̃⁽ᵗ⁾ - yₖ⁽ᵗ⁾ ‖ʳ⁻² (yₖ⁽ᵗ⁾ - ξ̃⁽ᵗ⁾), if k = k⁽ᵗ⁾; 0, if k ≠ k⁽ᵗ⁾;
+
+        * yₖ⁽ᵗ⁺¹⁾ = πY(yₖ⁽ᵗ⁾ - ρₜgₖ⁽ᵗ⁾), k=1,…,K;
 
         Parameters
         ----------
         X : np.ndarray
             The input tensor containing training element {ξᵢ}.
+
         y : None
             Ignored. This parameter exists only for compatibility with estimator interface.
 
@@ -120,8 +139,10 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         ------
         ValueError
             If the input tensor {ξᵢ} does not contain any elements.
+
         ValueError
             If dimensions of initial quantized distribution {y₀} and input tensor {ξᵢ} do not match.
+
         ValueError
             The number of elements in the initial quantized distribution {y₀} does not match the number of optimal
             quants in the class constructor.
@@ -150,14 +171,14 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                     )
 
                 self.cluster_centers_ = self._init.copy()
-            case StochasticQuantizationInit.SAMPLE:
+            case "sample":
                 random_indices = random_state.choice(
                     X_len, size=self._n_clusters, replace=False
                 )
                 self.cluster_centers_ = X[random_indices]
-            case StochasticQuantizationInit.RANDOM:
+            case "random":
                 self.cluster_centers_ = random_state.rand(self._n_clusters, X_dims)
-            case StochasticQuantizationInit.K_MEANS_PLUS_PLUS:
+            case "k-means++" | None:
                 random_indices = random_state.choice(X_len, size=1, replace=False)
                 self.cluster_centers_ = np.expand_dims(X[random_indices.item()], axis=0)
 

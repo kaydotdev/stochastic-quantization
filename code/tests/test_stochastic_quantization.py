@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.exceptions import NotFittedError
 
 from sq.optim import SGDOptimizer
-from sq.quantization import StochasticQuantization, StochasticQuantizationInit
+from sq.quantization import StochasticQuantization
 
 
 class TestStochasticQuantization(unittest.TestCase):
@@ -87,7 +87,7 @@ class TestStochasticQuantization(unittest.TestCase):
             n_clusters=1,
             max_iter=1,
             random_state=self.random_state,
-            init=StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
+            init="k-means++",
         )
 
         X = np.array(
@@ -112,7 +112,7 @@ class TestStochasticQuantization(unittest.TestCase):
             n_clusters=2,
             max_iter=0,
             random_state=self.random_state,
-            init=StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
+            init="k-means++",
         )
 
         X = np.array(
@@ -145,7 +145,7 @@ class TestStochasticQuantization(unittest.TestCase):
             n_clusters=2,
             max_iter=1,
             random_state=self.random_state,
-            init=StochasticQuantizationInit.SAMPLE,
+            init="sample",
         )
 
         expected_cluster_centers = np.array(
@@ -177,7 +177,7 @@ class TestStochasticQuantization(unittest.TestCase):
             n_clusters=2,
             max_iter=1,
             random_state=self.random_state,
-            init=StochasticQuantizationInit.RANDOM,
+            init="random",
         )
 
         expected_cluster_centers = np.array(
@@ -209,7 +209,7 @@ class TestStochasticQuantization(unittest.TestCase):
             n_clusters=2,
             max_iter=1,
             random_state=self.random_state,
-            init=StochasticQuantizationInit.K_MEANS_PLUS_PLUS,
+            init="k-means++",
         )
 
         expected_cluster_centers = np.array(
