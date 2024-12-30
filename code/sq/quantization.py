@@ -42,6 +42,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         learning_rate: Union[float, np.float64] = 0.001,
         rank: Union[int, np.uint] = 3,
         verbose: Union[int, np.uint] = 0,
+        element_selection_method: Optional[str] = None,
         init: Optional[Union[str, np.ndarray]] = None,
         tol: Optional[Union[float, np.float64]] = None,
         log_step: Optional[Union[int, np.uint]] = None,
@@ -69,11 +70,16 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             The degree of the norm (rank) r. Must be greater than or equal to 3.
 
         verbose : int or np.uint, default=0
-            Controls verbosity:
+            Verbosity mode (0 - silent mode, 1 - logs progress to STDOUT).
 
-            * 0: Silent mode.
+        element_selection_method : {‘permutation’, ‘sample’}, optional
+            Method used to select elements uniformly from {ξᵢ} during each iteration:
 
-            * 1: Logs progress to STDOUT.
+            * 'permutation': Each element from {ξᵢ} is selected only once.
+
+            * 'sample': Elements from {ξᵢ} can be selected multiple times.
+
+            If not specified, defaults to 'permutation'.
 
         init : {‘k-means++’, ‘sample’, ‘random’} or np.ndarray, optional
             Initialization strategy for the elements {yₖ} in the quantized distribution:
@@ -104,6 +110,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         self._optim = optim
         self._n_clusters = n_clusters
         self._max_iter = max_iter
+        self._element_selection_method = element_selection_method
         self._init = init
         self._learning_rate = learning_rate
         self._rank = rank
@@ -202,6 +209,11 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                     self.cluster_centers_ = np.vstack(
                         (self.cluster_centers_, next_centroid)
                     )
+            case _:
+                raise ValueError(
+                    f"Initialization strategy ‘{self._init}’ is not a valid option. Supported options are "
+                    "{‘sample’, ‘random’, ‘k-means++’}."
+                )
 
         if self._verbose:
             print("Initialization complete")
@@ -215,7 +227,21 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         for i in range(self._max_iter):
             self.n_iter_ += 1
 
-            for ksi_j in np.random.permutation(X):
+            match self._element_selection_method:
+                case "permutation" | None:
+                    ksi = (ksi_j for ksi_j in random_state.permutation(X))
+                case "sample":
+                    ksi = (
+                        X[j]
+                        for j in random_state.choice(X_len, size=X_len, replace=True)
+                    )
+                case _:
+                    raise ValueError(
+                        f"Element selection method ‘{self._element_selection_method}’ is not a valid option. Supported "
+                        "options are {‘permutation’, ‘sample’}."
+                    )
+
+            for ksi_j in ksi:
                 self.n_step_ += 1
 
                 nearest_quant, quant_ind = find_nearest_element(
