@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 
-from sq.quantization import calculate_loss
+from sq.quantization import _calculate_loss
 
 
 class TestCalculateLoss(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestCalculateLoss(unittest.TestCase):
         # assert
         with self.assertRaises(ValueError):
             # act
-            calculate_loss(x, y)
+            _calculate_loss(x, y)
 
     def test_should_raise_value_error_if_different_axis(self):
         # arrange
@@ -27,7 +27,7 @@ class TestCalculateLoss(unittest.TestCase):
         # assert
         with self.assertRaises(ValueError):
             # act
-            calculate_loss(x, y)
+            _calculate_loss(x, y)
 
     def test_should_raise_value_error_if_one_of_distributions_is_empty(self):
         # arrange
@@ -37,7 +37,7 @@ class TestCalculateLoss(unittest.TestCase):
         # assert
         with self.assertRaises(ValueError):
             # act
-            calculate_loss(x, y)
+            _calculate_loss(x, y)
 
     def test_should_return_distance_for_distributions_with_different_size(self):
         # arrange
@@ -65,7 +65,7 @@ class TestCalculateLoss(unittest.TestCase):
         )
 
         # act
-        actual_distance = calculate_loss(x, y)
+        actual_distance = _calculate_loss(x, y)
 
         # assert
         self.assertAlmostEqual(actual_distance, expected_distance, places=7)
@@ -78,7 +78,7 @@ class TestCalculateLoss(unittest.TestCase):
         y = np.array([[1.0, 1.0], [1.0, 1.0]])
 
         # act
-        actual_distance = calculate_loss(x, y)
+        actual_distance = _calculate_loss(x, y)
 
         # assert
         self.assertAlmostEqual(actual_distance, expected_distance, places=7)

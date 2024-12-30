@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 
-from sq.quantization import find_nearest_element
+from sq.quantization import _find_nearest_element
 
 
 class TestFindNearestElement(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestFindNearestElement(unittest.TestCase):
         # assert
         with self.assertRaises(ValueError):
             # act
-            find_nearest_element(x, y)
+            _find_nearest_element(x, y)
 
     def test_should_raise_value_error_if_different_axis(self):
         # arrange
@@ -27,7 +27,7 @@ class TestFindNearestElement(unittest.TestCase):
         # assert
         with self.assertRaises(ValueError):
             # act
-            find_nearest_element(x, y)
+            _find_nearest_element(x, y)
 
     def test_should_raise_value_error_if_one_of_distributions_is_empty(self):
         # arrange
@@ -37,7 +37,7 @@ class TestFindNearestElement(unittest.TestCase):
         # assert
         with self.assertRaises(ValueError):
             # act
-            find_nearest_element(x, y)
+            _find_nearest_element(x, y)
 
     def test_should_return_nearest_element_with_index(self):
         # arrange
@@ -59,7 +59,7 @@ class TestFindNearestElement(unittest.TestCase):
         y = np.array([0.0, 0.0])
 
         # act
-        actual_element, actual_index = find_nearest_element(x, y)
+        actual_element, actual_index = _find_nearest_element(x, y)
 
         # assert
         np.testing.assert_allclose(
@@ -87,7 +87,7 @@ class TestFindNearestElement(unittest.TestCase):
         y = np.array([0.0, 0.0])
 
         # act
-        actual_element, actual_index = find_nearest_element(x, y)
+        actual_element, actual_index = _find_nearest_element(x, y)
 
         # assert
         np.testing.assert_allclose(

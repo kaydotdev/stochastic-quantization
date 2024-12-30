@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 
 
-def calculate_loss(xi: np.ndarray, y: np.ndarray) -> np.float64:
+def _calculate_loss(xi: np.ndarray, y: np.ndarray) -> np.float64:
     """Calculates stochastic Wasserstein (or Kantorovich–Rubinstein) distance between distributions ξ and y:
 
     F(y) = Σᵢ₌₁ᴵ pᵢ min₁≤k≤K d(ξᵢ, yₖ)ʳ
@@ -48,7 +48,7 @@ def calculate_loss(xi: np.ndarray, y: np.ndarray) -> np.float64:
     return np.sum(min_distance)
 
 
-def find_nearest_element(
+def _find_nearest_element(
     y: np.ndarray, target: np.ndarray
 ) -> Tuple[np.ndarray, np.uint]:
     """Searches for the nearest element in `y` to `target` based on Euclidean distance. This function computes the

@@ -5,7 +5,8 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import check_is_fitted, check_random_state
 
-from .metric import calculate_loss, find_nearest_element
+from .init import _kmeans_plus_plus
+from .metric import _calculate_loss, _find_nearest_element
 from .optim import BaseOptimizer
 
 
@@ -186,29 +187,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             case "random":
                 self.cluster_centers_ = random_state.rand(self._n_clusters, X_dims)
             case "k-means++" | None:
-                random_indices = random_state.choice(X_len, size=1, replace=False)
-                self.cluster_centers_ = np.expand_dims(X[random_indices.item()], axis=0)
-
-                for _ in range(1, self._n_clusters):
-                    pairwise_distance = np.min(
-                        np.linalg.norm(
-                            X[:, np.newaxis] - self.cluster_centers_, axis=-1
-                        ),
-                        axis=-1,
-                    )
-                    pairwise_probabilities = pairwise_distance / np.sum(
-                        pairwise_distance
-                    )
-                    cumulative_probabilities = np.cumsum(pairwise_probabilities)
-
-                    next_centroid_index = np.searchsorted(
-                        cumulative_probabilities, random_state.rand()
-                    )
-                    next_centroid = X[next_centroid_index]
-
-                    self.cluster_centers_ = np.vstack(
-                        (self.cluster_centers_, next_centroid)
-                    )
+                self.cluster_centers_ = _kmeans_plus_plus(
+                    X, self._n_clusters, random_state
+                )
             case _:
                 raise ValueError(
                     f"Initialization strategy ‘{self._init}’ is not a valid option. Supported options are "
@@ -221,7 +202,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         self.n_iter_ = 0
         self.n_step_ = 0
         self._log_step = self._log_step or X_len
-        self.loss_history_ = [calculate_loss(X, self.cluster_centers_)]
+        self.loss_history_ = [_calculate_loss(X, self.cluster_centers_)]
         self._optim.reset()
 
         for i in range(self._max_iter):
@@ -244,7 +225,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             for ksi_j in ksi:
                 self.n_step_ += 1
 
-                nearest_quant, quant_ind = find_nearest_element(
+                nearest_quant, quant_ind = _find_nearest_element(
                     self.cluster_centers_, ksi_j
                 )
 
@@ -259,7 +240,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                 )
 
                 if not self.n_step_ % self._log_step:
-                    current_loss = calculate_loss(X, self.cluster_centers_)
+                    current_loss = _calculate_loss(X, self.cluster_centers_)
 
                     self.loss_history_.append(current_loss)
 
@@ -268,7 +249,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                             f"Gradient step [{self.n_step_}/{self._max_iter * X_len}]: loss={current_loss}"
                         )
 
-            current_loss = calculate_loss(X, self.cluster_centers_)
+            current_loss = _calculate_loss(X, self.cluster_centers_)
 
             if (
                 self._tol is not None
