@@ -35,10 +35,19 @@ def _kmeans_plus_plus(
 
     """
 
+    X_len, _ = X.shape
+
+    if not X_len:
+        raise ValueError("The input tensor X should not be empty.")
+
+    if n_clusters < 1:
+        raise ValueError(
+            "The number of initial cluster centers should not be less than 1."
+        )
+
     if random_state is None:
         random_state = np.random.RandomState()
 
-    X_len, _ = X.shape
     random_indices = random_state.choice(X_len, size=1, replace=False)
     cluster_centers = np.expand_dims(X[random_indices.item()], axis=0)
 
