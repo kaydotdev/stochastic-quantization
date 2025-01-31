@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import check_is_fitted, check_random_state
 
-from .init import _kmeans_plus_plus
+from .init import _kmeans_plus_plus, _milp
 from .metric import _calculate_loss, _find_nearest_element
 from .optim import BaseOptimizer
 
@@ -82,7 +82,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
             If not specified, defaults to 'permutation'.
 
-        init : {‘k-means++’, ‘sample’, ‘random’} or np.ndarray, optional
+        init : {‘sample’, ‘random’, ‘k-means++’, ‘milp’} or np.ndarray, optional
             Initialization strategy for the elements {yₖ} in the quantized distribution:
 
             * np.ndarray: Use the provided array as initial elements. Must have shape (n_clusters, n_features).
@@ -91,8 +91,11 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
             * 'random': Initialize elements by random sampling from a uniform distribution over [0, 1).
 
-            * 'k-means++': Use an empirical probability distribution based on point contributions to inertia
-              for selecting initial centroids.
+            * 'k-means++': Initialize elements using an empirical probability distribution based on point contributions
+            to inertia for selecting initial centroids.
+
+            * 'milp': Initialize elements through the solution of a mixed-integer linear programming (MILP) problem
+            with a cardinality constraint.
 
             If not specified, defaults to 'k-means++'.
 
@@ -186,6 +189,8 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                 self.cluster_centers_ = X[random_indices]
             case "random":
                 self.cluster_centers_ = random_state.rand(self._n_clusters, X_dims)
+            case "milp":
+                self.cluster_centers_ = _milp(X, self._n_clusters)
             case "k-means++" | None:
                 self.cluster_centers_ = _kmeans_plus_plus(
                     X, self._n_clusters, random_state

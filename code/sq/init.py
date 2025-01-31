@@ -84,6 +84,58 @@ def _milp(
     weights: Optional[np.ndarray] = None,
     **kwargs,
 ):
+    """Initializes cluster centers {yₖ} through the solution of a mixed-integer linear programming (MILP) problem with
+    a cardinality constraint that minimizes the Kantorovich–Rubinstein distance between elements of the set {ξᵢ}:
+
+    min(δᵢ,xᵢⱼ) Σⁱ₌₁ᵐ Σʲ₌₁ᵐ dist(ξᵢ,ξⱼ)xᵢⱼ
+
+    Σᵢ₌₁ᵐ xᵢⱼ = qⱼ,   Σⱼ₌₁ᵐ xᵢⱼ ≤ δᵢ,   Σᵢ₌₁ᵐ δᵢ ≤ k
+
+    i = 1, …, m    j = 1, …, m    δᵢ ∈ {0, 1}    xᵢⱼ ≥ 0
+
+    With the location terminology, this problem finds locations of points ξᵢ and transportation volumes xᵢⱼ to consumer
+    with demands qᵢ. A feasible solution is characterized by k selected elements ξᵢ, where selection variables δᵢ equal
+    1. These selected variables constitute the optimal centers {yₖ}.
+
+    Regarding the initialization strategy, the following parameters are defined:
+
+     * {qᵢ} represents the selection probabilities of corresponding elements {ξᵢ}
+
+     * dist(ξᵢ,ξⱼ) denotes the distance between elements ξᵢ and ξⱼ, expressed as: dist(ξᵢ, ξⱼ) = √Σₗ₌₁ⁿ (ξᵢₗ - ξⱼₗ)²
+
+    Parameters
+    ----------
+    X : np.ndarray
+        The input tensor containing training element {ξᵢ}.
+
+    n_clusters : int or np.uint, default=2
+        The number of initial cluster centers {yₖ}. Must be greater than or equal to 1.
+
+    weights : np.ndarray, optional
+        The selection probabilities (weights) {qᵢ} of corresponding elements {ξᵢ}. If not specified, the weights are
+        set as a normalized unit vector.
+
+    kwargs : dict, optional
+        Additional keyword arguments passed to `scipy.optimize.milp` solver.
+
+    Returns
+    -------
+    cluster_centers : np.ndarray
+        Initial positions of cluster centers {yₖ}.
+
+    Raises
+    ------
+    ValueError
+        If the input tensor {ξᵢ} does not contain any elements.
+
+    ValueError
+        The number of initial cluster centers {yₖ} is less than 1.
+
+    ValueError
+        If the selection probabilities vector {qᵢ} does not have one dimension or if the number of elements does not
+        correspond to the number of elements in the input tensor {ξᵢ}.
+    """
+
     X_len, _ = X.shape
 
     if not X_len:
@@ -95,7 +147,7 @@ def _milp(
         )
 
     if weights is None:
-        # Assign default weights distribution as a normalized unit vector
+        # Assign default weights as a normalized unit vector
         weights = np.ones(X_len) / X_len
     elif weights.ndim != 1:
         raise ValueError("The vector of element weights must have one dimension.")
@@ -148,8 +200,7 @@ def _milp(
     if not result.success:
         raise ValueError("The optimal solution of MILP initialization was not found.")
 
-    # The optimal integer variable values function as selection indicators for the set of centers (1 = inclusion,
-    # 0 = exclusion). Each variable corresponds to a distinct index position in the input tensor X.
+    # Separating selection variables from transportation volumes
     optimal_selection = result.x[-X_len:]
     center_indexes = np.argwhere(optimal_selection >= 0.5).flatten().tolist()
     cluster_centers = X[center_indexes, :]
