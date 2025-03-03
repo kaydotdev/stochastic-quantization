@@ -18,7 +18,7 @@ researchers should refer to the commit hash mentioned in the description.
 [![Open In Colab](https://img.shields.io/badge/Colab-F9AB00?logo=googlecolab&color=525252)](https://colab.research.google.com/github/kaydotdev/stochastic-quantization/blob/master/code/notebooks/quantization.ipynb)
 [![Open In Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?logo=Kaggle&logoColor=white)](https://www.kaggle.com/notebooks/welcome?src=https://github.com/kaydotdev/stochastic-quantization/blob/master/code/notebooks/quantization.ipynb)
 
-by [Anton Kozyriev](mailto:a.kozyriev@kpi.ua)<sup>1</sup>, [Vladimir Norkin](mailto:v.norkin@kpi.ua)<sup>1,2</sup>
+by [Anton Kozyriev](https://orcid.org/0009-0007-6692-2162)<sup>1</sup>, [Vladimir Norkin](https://orcid.org/0000-0003-3255-0405)<sup>1,2</sup>
 
 1. Igor Sikorsky Kyiv Polytechnic Institute, National Technical University of Ukraine, Kyiv, 03056, Ukraine
 2. V.M.Glushkov Institute of Cybernetics, National Academy of Sciences of Ukraine, Kyiv, 03178, Ukraine
