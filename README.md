@@ -9,6 +9,42 @@ and experimental outcomes of the Stochastic Quantization algorithm. The Python p
 independently of the research documentation; therefore, to reproduce specific results presented in the paper, 
 researchers should refer to the commit hash mentioned in the description.
 
+## Example
+
+The Python implementation of the algorithm has a [scikit-learn](https://scikit-learn.org/stable/index.html)-friendly 
+API, thus enabling its integration into the 
+[Pipeline](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline) 
+sequence of built-in data transformers.
+
+```python
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
+import sq
+
+
+# Load the Iris dataset
+X, _ = load_iris(return_X_y=True)
+
+# Create an optimizer for Stochastic Quantization clustering
+optimizer = sq.SGDOptimizer()
+
+# Create a pipeline with preprocessing and Stochastic Quantization clustering
+pipeline = Pipeline(
+    [
+        ("scaler", StandardScaler()),  # Scale features to have mean=0 and variance=1
+        ("sq", sq.StochasticQuantization(optimizer, n_clusters=3)),
+    ]
+)
+
+# Fit the pipeline to the data
+pipeline.fit(X)
+
+# Get the cluster labels
+labels = pipeline.predict(X)
+```
+
 ## Research Articles
 
 ### Robust Clustering on High-Dimensional Data with Stochastic Quantization
