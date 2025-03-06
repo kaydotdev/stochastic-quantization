@@ -198,7 +198,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             case _:
                 raise ValueError(
                     f"Initialization strategy ‘{self._init}’ is not a valid option. Supported options are "
-                    "{‘sample’, ‘random’, ‘k-means++’}."
+                    "{‘sample’, ‘random’, ‘k-means++’, ‘milp’}."
                 )
 
         if self._verbose:
