@@ -1,13 +1,13 @@
-# Stochastic Vector Quantization
+# Adaptive Stochastic K-means
 
-This repository explores an implementation of the **Stochastic K-means algorithm** (also referred to as the 
+This repository explores an implementation of the **Adaptive Stochastic K-means** (also referred to as the
 **Stochastic Quantization algorithm**), a robust and scalable alternative to existing K-means solvers, designed to 
 handle large datasets and utilize memory more efficiently during computation. The implementation examines the 
 application of the algorithm to high-dimensional unsupervised and semi-supervised learning tasks. The repository 
 contains both a Python package for reproducing experimental results and a LaTeX manuscript documenting the theoretical 
-and experimental outcomes of the Stochastic Quantization algorithm. The Python package continues to evolve 
-independently of the research documentation; therefore, to reproduce specific results presented in the paper, 
-researchers should refer to the commit hash mentioned in the description.
+and experimental outcomes of the algorithm. The Python package continues to evolve independently of the research
+documentation; therefore, to reproduce specific results presented in the paper, researchers should refer to the
+commit hash mentioned in the description.
 
 ## Example
 
