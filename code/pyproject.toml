@@ -6,9 +6,9 @@ build-backend = "setuptools.build_meta"
 exclude = ["tests", "tests.*"]
 
 [project]
-name = "sq"
+name = "sqg"
 version = "1.0.0"
-description = "Robust Clustering on High-Dimensional Data with Stochastic Quantization"
+description = "A robust and scalable alternative to existing K-means solvers."
 authors = [
     {name = "Vladimir Norkin", email = "v.norkin@kpi.ua"},
     {name = "Anton Kozyriev", email = "a.kozyriev@kpi.ua"},
@@ -23,10 +23,9 @@ requires-python = ">=3.8"
 keywords = [
     "stochastic quantization",
     "clustering algorithms",
+    "K-means",
     "stochastic gradient descent",
     "non-convex optimization",
-    "deep metric learning",
-    "data compression",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",

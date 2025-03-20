@@ -3,8 +3,8 @@ import numpy as np
 
 from sklearn.exceptions import NotFittedError
 
-from sq.optim import SGDOptimizer
-from sq.quantization import StochasticQuantization
+from sqg.optim import SGDOptimizer
+from sqg.quantization import StochasticQuantization
 
 
 class TestStochasticQuantization(unittest.TestCase):

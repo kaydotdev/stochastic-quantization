@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 
-from sq.quantization import _find_nearest_element
+from sqg.quantization import _find_nearest_element
 
 
 class TestFindNearestElement(unittest.TestCase):

@@ -3,24 +3,14 @@ from setuptools import setup, find_packages
 
 if __name__ == "__main__":
     setup(
-        name="sq",
-        fullname="Stochastic Quantization",
-        description="Robust Clustering on High-Dimensional Data with Stochastic Quantization",
-        long_description="This paper addresses the limitations of conventional vector quantization algorithms, "
-        "particularly K-Means and its variant K-Means++, and investigates the Stochastic Quantization (SQ) algorithm "
-        "as a scalable alternative for high-dimensional unsupervised and semi-supervised learning tasks. Traditional "
-        "clustering algorithms often suffer from inefficient memory utilization during computation, necessitating the "
-        "loading of all data samples into memory, which becomes impractical for large-scale datasets. While variants "
-        "such as Mini-Batch K-Means partially mitigate this issue by reducing memory usage, they lack robust "
-        "theoretical convergence guarantees due to the non-convex nature of clustering problems. In contrast, the "
-        "Stochastic Quantization algorithm provides strong theoretical convergence guarantees, making it a robust "
-        "alternative for clustering tasks. We demonstrate the computational efficiency and rapid convergence of the "
-        "algorithm on an image classification problem with partially labeled data, comparing model accuracy across "
-        "various ratios of labeled to unlabeled data. To address the challenge of high dimensionality, we employ a "
-        "Triplet Network to encode images into low-dimensional representations in a latent space, which serve as a "
-        "basis for comparing the efficiency of both the Stochastic Quantization algorithm and traditional quantization "
-        "algorithms. Furthermore, we enhance the algorithm's convergence speed by introducing modifications with an "
-        "adaptive learning rate.",
+        name="sqg",
+        fullname="Stochastic Quasi-Gradient K-means",
+        description="A robust and scalable alternative to existing K-means solvers.",
+        long_description="Stochastic Quasi-Gradient K-means (also referred to as the SQG-clustering or Stochastic "
+        "Quantization) is a robust and scalable alternative to existing K-means solvers, designed to handle large "
+        "datasets and utilize memory more efficiently during computation. It reframes the clustering problem as a "
+        "stochastic transportation problem by minimizing the distance between elements of the original distribution "
+        "{ξ} and atoms of the encoded discrete distribution {yₖ}.",
         version="1.0.0",
         author="Vladimir Norkin, Anton Kozyriev",
         author_email="a.kozyriev@kpi.ua",
@@ -48,10 +38,9 @@ if __name__ == "__main__":
         keywords=[
             "stochastic quantization",
             "clustering algorithms",
+            "K-means",
             "stochastic gradient descent",
             "non-convex optimization",
-            "deep metric learning",
-            "data compression",
         ],
         install_requires=[
             "numpy>=1.26.4,<2",

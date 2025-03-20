@@ -1,6 +1,6 @@
-# Adaptive Stochastic K-means
+# Stochastic Quasi-Gradient K-means (SQG-clustering)
 
-This repository explores an implementation of the **Adaptive Stochastic K-means** (also referred to as the
+This repository explores an implementation of the **Stochastic Quasi-Gradient K-means** (also referred to as the
 **Stochastic Quantization algorithm**), a robust and scalable alternative to existing K-means solvers, designed to 
 handle large datasets and utilize memory more efficiently during computation. The implementation examines the 
 application of the algorithm to high-dimensional unsupervised and semi-supervised learning tasks. The repository 
@@ -21,25 +21,22 @@ from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
-import sq
+import sqg
 
 
 # Load the Iris dataset
 X, _ = load_iris(return_X_y=True)
 
-# Create an optimizer for Stochastic Quantization clustering
-optimizer = sq.SGDOptimizer()
+# Create an optimizer for SQG-clustering
+optimizer = sqg.SGDOptimizer()
 
-# Create a pipeline with preprocessing and Stochastic Quantization clustering
+# Create and fit a pipeline with preprocessing and SQG-clustering
 pipeline = Pipeline(
     [
         ("scaler", StandardScaler()),  # Scale features to have mean=0 and variance=1
-        ("sq", sq.StochasticQuantization(optimizer, n_clusters=3)),
+        ("sqg", sqg.StochasticQuantization(optimizer, n_clusters=3)),
     ]
-)
-
-# Fit the pipeline to the data
-pipeline.fit(X)
+).fit(X)
 
 # Get the cluster labels
 labels = pipeline.predict(X)

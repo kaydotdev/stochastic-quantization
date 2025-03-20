@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 
-from sq.quantization import _calculate_loss
+from sqg.quantization import _calculate_loss
 
 
 class TestCalculateLoss(unittest.TestCase):
