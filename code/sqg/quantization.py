@@ -1,12 +1,14 @@
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
+import joblib
 import numpy as np
-
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import check_is_fitted, check_random_state
+from tqdm.autonotebook import tqdm
 
-from .init import _kmeans_plus_plus, _milp
-from .metric import _calculate_loss, _find_nearest_element
+from centroids_storage.factory import CentroidStorage, StorageBackendType, CentroidStorageFactory
+from progress_tracking import tqdm_joblib
+from utils import batched_iterable
 from .optim import BaseOptimizer
 
 
@@ -30,24 +32,25 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
     n_iter_ : int
         Number of iterations until declaring convergence.
 
-    cluster_centers_ : ndarray
-        The optimal set of quantized points {y₁, …, yₖ}.
     """
 
     def __init__(
-        self,
-        optim: BaseOptimizer,
-        *,
-        n_clusters: Union[int, np.uint] = 2,
-        max_iter: Union[int, np.uint] = 1,
-        learning_rate: Union[float, np.float64] = 0.001,
-        rank: Union[int, np.uint] = 3,
-        verbose: Union[int, np.uint] = 0,
-        element_selection_method: Optional[str] = None,
-        init: Optional[Union[str, np.ndarray]] = None,
-        tol: Optional[Union[float, np.float64]] = None,
-        log_step: Optional[Union[int, np.uint]] = None,
-        random_state: Optional[np.random.RandomState] = None,
+            self,
+            optim: BaseOptimizer,
+            *,
+            n_clusters: Union[int, np.uint] = 2,
+            max_iter: Union[int, np.uint] = 1,
+            learning_rate: Union[float, np.float64] = 0.001,
+            rank: Union[int, np.uint] = 3,
+            verbose: Union[int, np.uint] = 0,
+            backend: StorageBackendType = "numpy",
+            element_selection_method: Optional[str] = None,
+            init: Optional[Union[str, np.ndarray]] = None,
+            tol: Optional[Union[float, np.float64]] = None,
+            log_step: Optional[Union[int, np.uint]] = None,
+            random_state: Optional[np.random.RandomState] = None,
+            backend_kwargs: dict = None,
+            **kwargs
     ):
         """Initialize Stochastic Quantization solver with provided hyperparameters.
 
@@ -71,7 +74,14 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
             The degree of the norm (rank) r. Must be greater than or equal to 3.
 
         verbose : int or np.uint, default=0
-            Verbosity mode (0 - silent mode, 1 - logs progress to STDOUT).
+            Verbosity mode (0 - silent mode, 1 - progress input with tqdm, 2 - additional log info like loss).
+            tqdm progress can be turned off by setting `use_tqdm=False` in `kwargs`. And loss is only printed when
+            `log_step` is set.
+
+        backend : StorageBackendType, default='numpy'
+            The backend storage type for the centroid storage. Supported options are 'numpy' and 'numpy_memmap',
+            'faiss' or any other CommandStorage implementation. Faiss backend requires the faiss library to be
+            installed.
 
         element_selection_method : {‘permutation’, ‘sample’}, optional
             Method used to select elements uniformly from {ξᵢ} during each iteration:
@@ -109,21 +119,82 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
         random_state : np.random.RandomState, optional
             Random state for reproducibility.
+
+        backend_kwargs : dict, optional
+            Additional keyword arguments for the centroid storage backend.
+            `keep_filepath` - does not remove filepath on model cleanup
+
+        Notes
+        -----
         """
 
+        self.n_iter_ = 0
+        self.n_step_ = 0
         self._optim = optim
-        self._n_clusters = n_clusters
         self._max_iter = max_iter
         self._element_selection_method = element_selection_method
-        self._init = init
         self._learning_rate = learning_rate
         self._rank = rank
         self._tol = tol
         self._log_step = log_step
         self._random_state = random_state
         self._verbose = verbose
+        self._verbose_details = verbose > 1
+        self._verbose_progress = verbose > 0 and kwargs.get("use_tqdm", True)
+        self.loss_history_ = []
+        self.iteration_loss_history_ = []
+        storage, deferred_action = CentroidStorageFactory.create(
+            backend, n_clusters, init, **(backend_kwargs or {})
+        )
+        self._centroid_storage: CentroidStorage = storage
+        self._deferred_action: Callable[[], None] = deferred_action
+        self._kwargs = kwargs
 
-    def fit(self, X: np.ndarray, y=None):
+    def __del__(self):
+        self._deferred_action()
+
+    @property
+    def centroids(self) -> np.ndarray:
+        return self._centroid_storage.centroids
+
+    def _shuffle_ksi(self, X: np.ndarray, random_state: np.random.RandomState):
+        """Shuffle the input tensor {ξᵢ} based on the specified element selection method.
+        Parameters
+        ----------
+        X : np.ndarray
+            The input tensor containing training element {ξᵢ}.
+        random_state : np.random.RandomState
+            Random state for reproducibility.
+        Returns
+        -------
+        ksi : generator
+            A generator that yields shuffled elements from the input tensor {ξᵢ}.
+        """
+        X_len, _ = X.shape
+        match self._element_selection_method:
+            case "permutation" | None:
+                ksi = (ksi_j for ksi_j in random_state.permutation(X))
+            case "sample":
+                ksi = (
+                    X[j]
+                    for j in random_state.choice(X_len, size=X_len, replace=True)
+                )
+            case _:
+                raise ValueError(
+                    f"Element selection method ‘{self._element_selection_method}’ is not a valid option. Supported "
+                    "options are {‘permutation’, ‘sample’}."
+                )
+        return ksi
+
+    def reset(self):
+        """Reset the Stochastic Quantization solver to its initial state."""
+        self.n_iter_ = 0
+        self.n_step_ = 0
+        self.loss_history_ = []
+        self.iteration_loss_history_ = []
+        self._optim.reset()
+
+    def fit(self, X: np.ndarray, y=None, n_jobs: int = 1):
         """Search optimal values of {yₖ} using numeric iterative sequence, that updates parameters {yₖ} based on the
         calculated gradient value of a norm between sampled ξᵢ and the nearest element yₖ:
 
@@ -140,6 +211,8 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
         y : None
             Ignored. This parameter exists only for compatibility with estimator interface.
+        n_jobs : int, default=1
+            The number of jobs to run in parallel. If -1, use all processors.
 
         Returns
         -------
@@ -165,116 +238,121 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         if not X_len:
             raise ValueError("The input tensor X should not be empty.")
 
-        match self._init:
-            case _ if isinstance(self._init, np.ndarray):
-                init_len, init_dims = self._init.shape
-
-                if init_dims != X_dims:
-                    raise ValueError(
-                        f"The dimensions of initial quantized distribution ({init_len}) and input tensor "
-                        f"({X_dims}) must match."
-                    )
-
-                if init_len != self._n_clusters:
-                    raise ValueError(
-                        f"The number of elements in the initial quantized distribution ({init_len}) should match the "
-                        f"given number of optimal quants ({self._n_clusters})."
-                    )
-
-                self.cluster_centers_ = self._init.copy()
-            case "sample":
-                random_indices = random_state.choice(
-                    X_len, size=self._n_clusters, replace=False
-                )
-                self.cluster_centers_ = X[random_indices]
-            case "random":
-                self.cluster_centers_ = random_state.rand(self._n_clusters, X_dims)
-            case "milp":
-                self.cluster_centers_ = _milp(X, self._n_clusters)
-            case "k-means++" | None:
-                self.cluster_centers_ = _kmeans_plus_plus(
-                    X, self._n_clusters, random_state
-                )
-            case _:
-                raise ValueError(
-                    f"Initialization strategy ‘{self._init}’ is not a valid option. Supported options are "
-                    "{‘sample’, ‘random’, ‘k-means++’, ‘milp’}."
-                )
-
-        if self._verbose:
+        self._centroid_storage.init_centroids(X, random_state)
+        if self._verbose_details:
             print("Initialization complete")
 
-        self.n_iter_ = 0
-        self.n_step_ = 0
-        self._log_step = self._log_step or X_len
-        self.loss_history_ = [_calculate_loss(X, self.cluster_centers_)]
-        self._optim.reset()
+        self.reset()
+        if self._log_step or self._tol:
+            initial_loss = self._centroid_storage.calculate_loss(X)
+            self.iteration_loss_history_.append(initial_loss)
+            self.loss_history_.append(initial_loss)
+            if self._verbose_details:
+                print("Initial loss:", initial_loss)
 
         for i in range(self._max_iter):
             self.n_iter_ += 1
 
-            match self._element_selection_method:
-                case "permutation" | None:
-                    ksi = (ksi_j for ksi_j in random_state.permutation(X))
-                case "sample":
-                    ksi = (
-                        X[j]
-                        for j in random_state.choice(X_len, size=X_len, replace=True)
-                    )
-                case _:
-                    raise ValueError(
-                        f"Element selection method ‘{self._element_selection_method}’ is not a valid option. Supported "
-                        "options are {‘permutation’, ‘sample’}."
-                    )
+            ksi = self._shuffle_ksi(X, random_state)
 
-            for ksi_j in ksi:
-                self.n_step_ += 1
-
-                nearest_quant, quant_ind = _find_nearest_element(
-                    self.cluster_centers_, ksi_j
-                )
-
-                grad_fn = (
-                    lambda x: self._rank
-                    * np.linalg.norm(ksi_j - x, ord=2) ** (self._rank - 2)
-                    * (x - ksi_j)
-                )
-
-                self.cluster_centers_[quant_ind, :] = self._optim.step(
-                    grad_fn, nearest_quant, self._learning_rate
-                )
-
-                if not self.n_step_ % self._log_step:
-                    current_loss = _calculate_loss(X, self.cluster_centers_)
-
-                    self.loss_history_.append(current_loss)
-
-                    if self._verbose:
-                        print(
-                            f"Gradient step [{self.n_step_}/{self._max_iter * X_len}]: loss={current_loss}"
+            if n_jobs == 1:
+                for ksi_j in tqdm(
+                        ksi, total=X_len, desc="Performing cluster optimization", disable=not self._verbose
+                ):
+                    self._optimize(self._centroid_storage, self._optim, ksi_j, self._rank, self._learning_rate)
+                    self.n_step_ += 1
+                    self.__log_step(X, X_len)
+            else:
+                with tqdm_joblib(
+                        total=X_len, desc="Performing cluster optimization", disable=not self._verbose):
+                    size = self._log_step or X_len
+                    for ksi_batch in batched_iterable(ksi, size):
+                        joblib.Parallel(n_jobs=n_jobs, max_nbytes=self._kwargs.get('joblib_max_nbytes', '50M'))(
+                            joblib.delayed(self._optimize)(
+                                self._centroid_storage,
+                                self._optim,
+                                ksi_j,
+                                self._rank,
+                                self._learning_rate,
+                            ) for ksi_j in ksi_batch
                         )
+                        self.n_step_ += size
+                        self.__log_step(X, X_len)
 
-            current_loss = _calculate_loss(X, self.cluster_centers_)
-
-            if (
-                self._tol is not None
-                and self.loss_history_[-1] - current_loss < self._tol
-            ):
-                if self._verbose:
+            if self._tol is not None and self._early_stop(X):
+                if self._verbose_details:
                     print(
-                        f"Converged (small optimal quants change) at step [{self.n_step_}/{self._max_iter * X_len}]"
+                        f"Converged (small optimal quants change) at step [{self.n_step_}/{self._max_iter * X_len}] "
+                        f"with loss={self.iteration_loss_history_[-1]} (iteration {self.n_iter_}, step "
+                        f"{self.n_step_ % X_len})"
                     )
                 break
-
         return self
 
-    def predict(self, X: np.ndarray):
+    def __log_step(self, X: np.ndarray, X_len: int):
+        """Log the objective function value at the specified step.
+        Parameters
+        ----------
+        X : np.ndarray
+            The input tensor containing training element {ξᵢ}.
+        """
+        if self._log_step and self.n_step_ % self._log_step == 0:
+            current_loss = self._centroid_storage.calculate_loss(X)
+            self.loss_history_.append(current_loss)
+
+            if self._verbose_details:
+                print(
+                    f"Gradient step [{self.n_step_}/{self._max_iter * X_len}]: loss={current_loss} "
+                    f"(iter: {self.n_iter_}, step: {self.n_step_ % X_len})"
+                )
+
+    def _early_stop(self, X: np.ndarray) -> bool:
+        """Early stop the Stochastic Quantization solver
+        based on the relative difference between the last two objective function values.
+        Parameters
+        ----------
+        X : np.ndarray
+            The input tensor containing training element {ξᵢ}.
+        Returns
+        -------
+        bool
+            True if the relative difference is less than the tolerance, False otherwise.
+        """
+        current_loss = self._centroid_storage.calculate_loss(X)
+        self.iteration_loss_history_.append(current_loss)
+        return self.iteration_loss_history_[-2] - current_loss < self._tol
+
+    @staticmethod
+    def _optimize(centroid_storage: CentroidStorage, optim: BaseOptimizer, ksi_j: np.array, rank: int,
+                  learning_rate: Union[float, np.float64]):
+        """Perform optimization step for a single sample.
+        Parameters
+        ----------
+        centroid_storage : CentroidStorage
+            Centroid storage object containing the current quantized distribution.
+        optim : BaseOptimizer
+            Optimizer object used for gradient descent.
+        ksi_j : np.ndarray
+            Sample from the input tensor {ξᵢ}.
+        """
+        nearest_quant, quant_ind = centroid_storage.find_nearest_centroid(ksi_j)
+
+        grad_fn = (
+            lambda x: rank * np.linalg.norm(ksi_j - x, ord=2) ** (rank - 2) * (x - ksi_j)
+        )
+
+        delta = optim.step(grad_fn, nearest_quant, learning_rate)
+        centroid_storage.update_centroid(quant_ind, delta)
+
+    def predict(self, X: np.ndarray, n_jobs: int = 1):
         """Predict the closest optimal quant {yₖ} each sample in X belongs to.
 
         Parameters
         ----------
         X : np.ndarray
             New data to predict.
+        n_jobs : int, default=1
+            The number of jobs to run in parallel. If -1, use all processors.
 
         Returns
         -------
@@ -289,8 +367,17 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
         check_is_fitted(self)
 
-        pairwise_distance = np.linalg.norm(
-            X[:, np.newaxis] - self.cluster_centers_, axis=-1
-        )
+        _predict = lambda storage, target: storage.find_nearest_centroid(target)[1]
 
-        return np.argmin(pairwise_distance, axis=-1)
+        if n_jobs == 1:
+            clusters = [
+                _predict(self._centroid_storage, target)
+                for target in tqdm(X, desc="Prediction of the closet cluster", disable=not self._verbose)
+            ]
+        else:
+            with tqdm_joblib(total=len(X), desc="Prediction of the closet cluster", disable=not self._verbose):
+                clusters = joblib.Parallel(n_jobs=n_jobs)(
+                    joblib.delayed(_predict)(self._centroid_storage, target) for target in X
+                )
+
+        return clusters
