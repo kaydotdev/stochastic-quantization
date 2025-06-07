@@ -1,7 +1,7 @@
 import numpy as np
 
-from centroids_storage.factory import CentroidStorageFactory
-from centroids_storage.numpy_storage import NumpyMemmapCentroidStorage
+from .factory import CentroidStorageFactory
+from .numpy_storage import NumpyMemmapCentroidStorage
 
 
 def _load_faiss():

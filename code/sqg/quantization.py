@@ -6,9 +6,9 @@ from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import check_is_fitted, check_random_state
 from tqdm.autonotebook import tqdm
 
-from centroids_storage.factory import CentroidStorage, StorageBackendType, CentroidStorageFactory
-from progress_tracking import tqdm_joblib
-from utils import batched_iterable
+from .centroids_storage.factory import CentroidStorage, StorageBackendType, CentroidStorageFactory
+from .progress_tracking import tqdm_joblib
+from .utils import batched_iterable
 from .optim import BaseOptimizer
 
 

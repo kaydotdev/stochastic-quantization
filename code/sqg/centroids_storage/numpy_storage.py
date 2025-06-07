@@ -1,10 +1,7 @@
-import os
-import tempfile
-
 import numpy as np
 
-from centroids_storage.factory import CentroidStorageFactory, CentroidStorage
-from centroids_storage.init import init_centroids
+from .factory import CentroidStorageFactory, CentroidStorage
+from .init import init_centroids
 
 
 @CentroidStorageFactory.register()
