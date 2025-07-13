@@ -4,10 +4,9 @@ import joblib
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import check_is_fitted, check_random_state
-from tqdm.autonotebook import tqdm
 
 from .centroids_storage.factory import CentroidStorage, StorageBackendType, CentroidStorageFactory
-from .progress_tracking import tqdm_joblib
+from .progress_tracking import tqdm_joblib, tqdm
 from .utils import batched_iterable
 from .optim import BaseOptimizer
 
@@ -257,14 +256,14 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
             if n_jobs == 1:
                 for ksi_j in tqdm(
-                        ksi, total=X_len, desc="Performing cluster optimization", disable=not self._verbose
+                        ksi, total=X_len, desc="Performing cluster optimization", disable=not self._verbose_progress
                 ):
                     self._optimize(self._centroid_storage, self._optim, ksi_j, self._rank, self._learning_rate)
                     self.n_step_ += 1
                     self.__log_step(X, X_len)
             else:
                 with tqdm_joblib(
-                        total=X_len, desc="Performing cluster optimization", disable=not self._verbose):
+                        total=X_len, desc="Performing cluster optimization", disable=not self._verbose_progress):
                     size = self._log_step or X_len
                     for ksi_batch in batched_iterable(ksi, size):
                         joblib.Parallel(n_jobs=n_jobs, max_nbytes=self._kwargs.get('joblib_max_nbytes', '50M'))(
@@ -372,10 +371,10 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         if n_jobs == 1:
             clusters = [
                 _predict(self._centroid_storage, target)
-                for target in tqdm(X, desc="Prediction of the closet cluster", disable=not self._verbose)
+                for target in tqdm(X, desc="Prediction of the closet cluster", disable=not self._verbose_progress)
             ]
         else:
-            with tqdm_joblib(total=len(X), desc="Prediction of the closet cluster", disable=not self._verbose):
+            with tqdm_joblib(total=len(X), desc="Prediction of the closet cluster", disable=not self._verbose_progress):
                 clusters = joblib.Parallel(n_jobs=n_jobs)(
                     joblib.delayed(_predict)(self._centroid_storage, target) for target in X
                 )

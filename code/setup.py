@@ -44,10 +44,11 @@ if __name__ == "__main__":
         install_requires=[
             "numpy>=1.26.4,<2",
             "scikit-learn>=1.5.1,<2",
-            "tqdm>=4.66.0,<5",
         ],
         extras_require={
             "faiss-cpu": ["faiss-cpu>=1.10.0,<2"],
-            "faiss-gpu": ["faiss-gpu>=1.10.0,<2"]
+            "faiss-gpu": ["faiss-gpu>=1.10.0,<2"],
+            "progress": ["tqdm>=4.66.0,<5"],
+            "all": ["sqg[faiss-cpu,faiss-gpu,progress]"]
         },
     )

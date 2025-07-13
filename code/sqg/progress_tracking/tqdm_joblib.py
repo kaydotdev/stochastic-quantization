@@ -2,7 +2,8 @@
 import contextlib
 
 import joblib
-from tqdm.autonotebook import tqdm
+
+from .tqdm_wrapper import tqdm
 
 
 @contextlib.contextmanager
