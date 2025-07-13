@@ -244,13 +244,19 @@ class CentroidStorageFactory:
         if isinstance(storage_type, str) and storage_type in cls._implementations:
             kwargs = deepcopy(kwargs)
             storage_implementation, requires_filepath = cls._implementations[storage_type]
+            memory_file = None
             if requires_filepath and "filepath" not in kwargs:
                 memory_file = tempfile.NamedTemporaryFile()
                 kwargs["filepath"] = memory_file.name
                 print(kwargs["filepath"])
+            
+            def cleanup():
+                if memory_file is not None and not kwargs.get("keep_filepath"):
+                    memory_file.close()
+            
             return storage_implementation(
                 n_clusters=n_clusters, init=init, **kwargs
-            ), (lambda: memory_file.close()) if not kwargs.get("keep_filepath") else lambda: None
+            ), cleanup
         raise ValueError(
             f"Unknown storage type: {storage_type}, supported types are: {sorted(cls._implementations.keys())} "
             f"or {CentroidStorage.__name__} instance"
