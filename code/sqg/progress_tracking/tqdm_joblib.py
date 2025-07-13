@@ -3,7 +3,7 @@ import contextlib
 
 import joblib
 
-from .tqdm_wrapper import tqdm
+from .tqdm_wrapper import tqdm, _TQDM_AVAILABLE
 
 
 @contextlib.contextmanager
@@ -12,6 +12,10 @@ def tqdm_joblib(*args, **kwargs):
     given as argument"""
 
     tqdm_object = tqdm(*args, **kwargs)
+
+    if not _TQDM_AVAILABLE:
+        yield tqdm_object
+        return
 
     class TqdmBatchCompletionCallback(joblib.parallel.BatchCompletionCallBack):
         def __init__(self, *args, **kwargs):
