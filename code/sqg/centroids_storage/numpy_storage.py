@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.exceptions import NotFittedError
 
 from .factory import CentroidStorageFactory, CentroidStorage
 from .init import init_centroids
@@ -25,7 +26,7 @@ class NumpyCentroidStorage(CentroidStorage):
     @property
     def centroids(self) -> np.ndarray:
         if self._centroids is None:
-            raise ValueError("Centroids have not been initialized yet.")
+            raise NotFittedError("Centroids have not been initialized yet.")
         return self._centroids
 
     def init_centroids(self, x: np.ndarray, random_state: np.random.RandomState):

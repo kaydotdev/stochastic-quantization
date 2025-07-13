@@ -1,8 +1,7 @@
 import unittest
 import numpy as np
 
-
-from sqg.quantization import _find_nearest_element
+from sqg.centroids_storage.factory import CentroidStorageFactory
 
 
 class TestFindNearestElement(unittest.TestCase):
@@ -11,33 +10,44 @@ class TestFindNearestElement(unittest.TestCase):
 
     def test_should_raise_value_error_if_shape_mismatch(self):
         # arrange
-        x = self.random_state.random((10, 2, 2))
-        y = self.random_state.random((1, 2))
+        x = self.random_state.random((10, 2))
+        y = self.random_state.random((1, 3))
+        
+        storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=10, init=x)
+        storage.init_centroids(x, self.random_state)
 
         # assert
         with self.assertRaises(ValueError):
             # act
-            _find_nearest_element(x, y)
+            storage.find_nearest_centroid(y)
+        cleanup()
 
     def test_should_raise_value_error_if_different_axis(self):
         # arrange
-        x = self.random_state.random((1, 2, 2))
-        y = self.random_state.random((1, 2, 2, 2))
+        x = self.random_state.random((1, 2))
+        y = np.array([[[1.0, 2.0], [3.0, 4.0]]])  # 3D array for init
+        
+        storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=1, init=y)
 
         # assert
         with self.assertRaises(ValueError):
             # act
-            _find_nearest_element(x, y)
+            storage.init_centroids(x, self.random_state)
+        cleanup()
 
     def test_should_raise_value_error_if_one_of_distributions_is_empty(self):
         # arrange
-        x = self.random_state.random((1, 2, 2))
+        x = self.random_state.random((1, 2))
         y = np.array([])
+        
+        storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=1, init=x)
+        storage.init_centroids(x, self.random_state)
 
         # assert
         with self.assertRaises(ValueError):
             # act
-            _find_nearest_element(x, y)
+            storage.find_nearest_centroid(y)
+        cleanup()
 
     def test_should_return_nearest_element_with_index(self):
         # arrange
@@ -57,15 +67,19 @@ class TestFindNearestElement(unittest.TestCase):
             ]
         )
         y = np.array([0.0, 0.0])
+        
+        storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=8, init=x)
+        storage.init_centroids(x, self.random_state)
 
         # act
-        actual_element, actual_index = _find_nearest_element(x, y)
+        actual_element, actual_index = storage.find_nearest_centroid(y)
 
         # assert
         np.testing.assert_allclose(
             actual_element, expected_element, rtol=1e-3, atol=1e-3
         )
         self.assertEqual(actual_index, expected_index)
+        cleanup()
 
     def test_should_return_first_index_of_multiple_nearest_elements(self):
         # arrange
@@ -85,15 +99,19 @@ class TestFindNearestElement(unittest.TestCase):
             ]
         )
         y = np.array([0.0, 0.0])
+        
+        storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=8, init=x)
+        storage.init_centroids(x, self.random_state)
 
         # act
-        actual_element, actual_index = _find_nearest_element(x, y)
+        actual_element, actual_index = storage.find_nearest_centroid(y)
 
         # assert
         np.testing.assert_allclose(
             actual_element, expected_element, rtol=1e-3, atol=1e-3
         )
         self.assertEqual(actual_index, expected_index)
+        cleanup()
 
 
 if __name__ == "__main__":

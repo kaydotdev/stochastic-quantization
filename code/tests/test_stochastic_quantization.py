@@ -11,7 +11,7 @@ class TestStochasticQuantization(unittest.TestCase):
     def setUp(self):
         self.random_state = np.random.RandomState(seed=42)
         self.algorithm = StochasticQuantization(
-            SGDOptimizer(), n_clusters=2, max_iter=1, random_state=self.random_state
+            SGDOptimizer(), n_clusters=2, max_iter=1, random_state=self.random_state, log_step=100
         )
         self.X = np.array(
             [
@@ -54,6 +54,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init=np.array([[[0.0, 0.0], [0.0, 0.0]]]),
+            log_step=1,
         )
 
         # assert
@@ -71,6 +72,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init=np.array([[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]]),
+            log_step=1,
         )
 
         # assert
@@ -88,6 +90,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init="k-means++",
+            log_step=1,
         )
 
         X = np.array(
@@ -113,6 +116,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=0,
             random_state=self.random_state,
             init="k-means++",
+            log_step=1,
         )
 
         X = np.array(
@@ -146,6 +150,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init="sample",
+            log_step=100
         )
 
         expected_cluster_centers = np.array(
@@ -178,6 +183,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init="random",
+            log_step=100
         )
 
         expected_cluster_centers = np.array(
@@ -210,6 +216,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init="k-means++",
+            log_step=100
         )
 
         expected_cluster_centers = np.array(

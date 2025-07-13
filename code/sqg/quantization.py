@@ -156,6 +156,17 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
     def centroids(self) -> np.ndarray:
         return self._centroid_storage.centroids
 
+    @property
+    def cluster_centers_(self) -> np.ndarray:
+        """Returns the cluster centers (centroids).
+        
+        Returns
+        -------
+        np.ndarray
+            The cluster centers.
+        """
+        return self._centroid_storage.centroids
+
     def _shuffle_ksi(self, X: np.ndarray, random_state: np.random.RandomState):
         """Shuffle the input tensor {ξᵢ} based on the specified element selection method.
         Parameters
