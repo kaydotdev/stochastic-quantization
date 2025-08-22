@@ -10,11 +10,11 @@ name = "sqg"
 version = "1.0.0"
 description = "A robust and scalable alternative to existing K-means solvers."
 authors = [
-    {name = "Vladimir Norkin", email = "v.norkin@kpi.ua"},
-    {name = "Anton Kozyriev", email = "a.kozyriev@kpi.ua"},
+    { name = "Vladimir Norkin", email = "v.norkin@kpi.ua" },
+    { name = "Anton Kozyriev", email = "a.kozyriev@kpi.ua" },
 ]
 readme = "README.md"
-license = {file = "LICENSE.code.md"}
+license = { file = "LICENSE.code.md" }
 dependencies = [
     "numpy>=1.26.4,<2",
     "scikit-learn>=1.5.1,<2",
@@ -47,3 +47,9 @@ classifiers = [
 Homepage = "https://github.com/kaydotdev/stochastic-quantization"
 Issues = "https://github.com/kaydotdev/stochastic-quantization/issues"
 Repository = "https://github.com/kaydotdev/stochastic-quantization.git"
+
+[project.optional-dependencies]
+faiss-cpu = ["faiss-cpu>=1.10.0,<2"]
+faiss-gpu = ["faiss-gpu>=1.10.0,<2"]
+progress = ["tqdm>=4.66.0,<5"]
+all = ["sqg[faiss-cpu,faiss-gpu,progress]"]
