@@ -9,7 +9,9 @@ from .init import init_centroids
 class NumpyCentroidStorage(CentroidStorage):
     name = "numpy"
 
-    def __init__(self, n_clusters: int, init: str | np.ndarray = "k-means++", *args, **kwargs):
+    def __init__(
+        self, n_clusters: int, init: str | np.ndarray = "k-means++", *args, **kwargs
+    ):
         """
         Initializes the NumpyCentroidStorage class.
 
@@ -36,7 +38,9 @@ class NumpyCentroidStorage(CentroidStorage):
         y = self.centroids
 
         if y.size == 0 or target.size == 0:
-            raise ValueError("Either the `y` input tensor or the `target` tensor is empty.")
+            raise ValueError(
+                "Either the `y` input tensor or the `target` tensor is empty."
+            )
 
         if y.shape[1:] != target.shape:
             raise ValueError(
@@ -57,7 +61,14 @@ class NumpyCentroidStorage(CentroidStorage):
 class NumpyMemmapCentroidStorage(NumpyCentroidStorage):
     name = "numpy_memmap"
 
-    def __init__(self, filepath: str, n_clusters: int, init: str | np.ndarray = "k-means++", *args, **kwargs):
+    def __init__(
+        self,
+        filepath: str,
+        n_clusters: int,
+        init: str | np.ndarray = "k-means++",
+        *args,
+        **kwargs,
+    ):
         """
         Initializes the NumpyCentroidStorage class.
 
@@ -73,8 +84,12 @@ class NumpyMemmapCentroidStorage(NumpyCentroidStorage):
 
     def init_centroids(self, x: np.ndarray, random_state: np.random.RandomState):
         _, x_dims = x.shape
-        self._centroids = np.memmap(self._filepath, dtype=x.dtype, mode='w+', shape=(self._n_clusters, x_dims))
-        self._centroids[:] = init_centroids(self._init, self._n_clusters, x, random_state)
+        self._centroids = np.memmap(
+            self._filepath, dtype=x.dtype, mode="w+", shape=(self._n_clusters, x_dims)
+        )
+        self._centroids[:] = init_centroids(
+            self._init, self._n_clusters, x, random_state
+        )
 
     def __getstate__(self):
         state = self.__dict__.copy()

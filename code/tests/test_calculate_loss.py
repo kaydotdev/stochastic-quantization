@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from sqg.centroids_storage.factory import CentroidStorageFactory
+from sqc.centroids_storage.factory import CentroidStorageFactory
 
 
 class TestCalculateLoss(unittest.TestCase):
@@ -10,9 +10,9 @@ class TestCalculateLoss(unittest.TestCase):
 
     def test_should_raise_value_error_if_shape_mismatch(self):
         # arrange
-        x = self.random_state.random((10, 2)) 
+        x = self.random_state.random((10, 2))
         y = self.random_state.random((10, 3))
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=10, init=y)
 
         # assert
@@ -25,7 +25,7 @@ class TestCalculateLoss(unittest.TestCase):
         # arrange
         x = self.random_state.random((1, 2))
         y = np.array([[[1.0, 2.0], [3.0, 4.0]]])
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=1, init=y)
 
         # assert
@@ -38,7 +38,7 @@ class TestCalculateLoss(unittest.TestCase):
         # arrange
         x = self.random_state.random((1, 2))
         y = np.array([])
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=1, init=y)
 
         # assert
@@ -71,7 +71,7 @@ class TestCalculateLoss(unittest.TestCase):
                 [0.25877998, 0.66252228],
             ]
         )
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=2, init=y)
         storage.init_centroids(x, self.random_state)
 
@@ -88,7 +88,7 @@ class TestCalculateLoss(unittest.TestCase):
 
         x = np.array([[1.0, 1.0], [1.0, 1.0]])
         y = np.array([[1.0, 1.0], [1.0, 1.0]])
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=2, init=y)
         storage.init_centroids(x, self.random_state)
 

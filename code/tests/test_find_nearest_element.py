@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from sqg.centroids_storage.factory import CentroidStorageFactory
+from sqc.centroids_storage.factory import CentroidStorageFactory
 
 
 class TestFindNearestElement(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestFindNearestElement(unittest.TestCase):
         # arrange
         x = self.random_state.random((10, 2))
         y = self.random_state.random((1, 3))
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=10, init=x)
         storage.init_centroids(x, self.random_state)
 
@@ -26,7 +26,7 @@ class TestFindNearestElement(unittest.TestCase):
         # arrange
         x = self.random_state.random((1, 2))
         y = np.array([[[1.0, 2.0], [3.0, 4.0]]])  # 3D array for init
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=1, init=y)
 
         # assert
@@ -39,7 +39,7 @@ class TestFindNearestElement(unittest.TestCase):
         # arrange
         x = self.random_state.random((1, 2))
         y = np.array([])
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=1, init=x)
         storage.init_centroids(x, self.random_state)
 
@@ -67,7 +67,7 @@ class TestFindNearestElement(unittest.TestCase):
             ]
         )
         y = np.array([0.0, 0.0])
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=8, init=x)
         storage.init_centroids(x, self.random_state)
 
@@ -99,7 +99,7 @@ class TestFindNearestElement(unittest.TestCase):
             ]
         )
         y = np.array([0.0, 0.0])
-        
+
         storage, cleanup = CentroidStorageFactory.create("numpy", n_clusters=8, init=x)
         storage.init_centroids(x, self.random_state)
 

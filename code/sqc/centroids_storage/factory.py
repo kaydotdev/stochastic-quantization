@@ -18,7 +18,9 @@ class CentroidStorage(abc.ABC):
         Method for initialization. Can be 'k-means++' or an ndarray of initial centroids.
     """
 
-    def __init__(self, n_clusters: int, init: str | np.ndarray = "k-means++", *args, **kwargs):
+    def __init__(
+        self, n_clusters: int, init: str | np.ndarray = "k-means++", *args, **kwargs
+    ):
         self._n_clusters = n_clusters
         self._init = init
 
@@ -183,6 +185,7 @@ class CentroidStorageFactory:
     """
     Factory class for creating centroid storage instances.
     """
+
     _implementations: dict[str, tuple[type[CentroidStorage], bool]] = dict()
 
     @classmethod
@@ -209,11 +212,11 @@ class CentroidStorageFactory:
 
     @classmethod
     def create(
-            cls,
-            storage_type: StorageBackendType,
-            n_clusters: int,
-            init: str | np.ndarray = "k-means++",
-            **kwargs
+        cls,
+        storage_type: StorageBackendType,
+        n_clusters: int,
+        init: str | np.ndarray = "k-means++",
+        **kwargs,
     ) -> tuple[CentroidStorage, Callable[[], None]]:
         """
         Creates a centroid storage instance.
@@ -243,20 +246,23 @@ class CentroidStorageFactory:
             return storage_type, lambda: None
         if isinstance(storage_type, str) and storage_type in cls._implementations:
             kwargs = deepcopy(kwargs)
-            storage_implementation, requires_filepath = cls._implementations[storage_type]
+            storage_implementation, requires_filepath = cls._implementations[
+                storage_type
+            ]
             memory_file = None
             if requires_filepath and "filepath" not in kwargs:
                 memory_file = tempfile.NamedTemporaryFile()
                 kwargs["filepath"] = memory_file.name
                 print(kwargs["filepath"])
-            
+
             def cleanup():
                 if memory_file is not None and not kwargs.get("keep_filepath"):
                     memory_file.close()
-            
-            return storage_implementation(
-                n_clusters=n_clusters, init=init, **kwargs
-            ), cleanup
+
+            return (
+                storage_implementation(n_clusters=n_clusters, init=init, **kwargs),
+                cleanup,
+            )
         raise ValueError(
             f"Unknown storage type: {storage_type}, supported types are: {sorted(cls._implementations.keys())} "
             f"or {CentroidStorage.__name__} instance"

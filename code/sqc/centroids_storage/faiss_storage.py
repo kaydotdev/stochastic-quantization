@@ -19,12 +19,13 @@ class FaissIndexBasedCentroidStorage(NumpyMemmapCentroidStorage):
     name = "faiss"
 
     def __init__(
-            self,
-            filepath: str,
-            n_clusters: int,
-            init: str | np.ndarray = "k-means++",
-            voronoi_cell_size: int = 100,
-            *args, **kwargs
+        self,
+        filepath: str,
+        n_clusters: int,
+        init: str | np.ndarray = "k-means++",
+        voronoi_cell_size: int = 100,
+        *args,
+        **kwargs
     ):
         """
         FaissIndexBasedCentroidStorage is a centroid storage class that uses FAISS for efficient nearest neighbor
@@ -52,7 +53,9 @@ class FaissIndexBasedCentroidStorage(NumpyMemmapCentroidStorage):
         x_len, x_dims = X.shape
         self._dim = x_dims
         quantizer = self._faiss.IndexFlatL2(self._dim)
-        index = self._faiss.IndexIVFFlat(quantizer, self._dim, self._voronoi_cell_size, self._faiss.METRIC_L2)
+        index = self._faiss.IndexIVFFlat(
+            quantizer, self._dim, self._voronoi_cell_size, self._faiss.METRIC_L2
+        )
         super().init_centroids(X, random_state)
         index.train(self._centroids)
         index.add_with_ids(self._centroids, np.arange(0, self.n_clusters))
@@ -74,12 +77,12 @@ class FaissIndexBasedCentroidStorage(NumpyMemmapCentroidStorage):
 
     def __getstate__(self):
         state = super().__getstate__()
-        state.pop('_faiss', None)
-        state['faiss_index'] = self._faiss.serialize_index(self.index)
+        state.pop("_faiss", None)
+        state["faiss_index"] = self._faiss.serialize_index(self.index)
         return state
 
     def __setstate__(self, state):
         self._faiss = _load_faiss()
-        faiss_index = state.pop('faiss_index')
+        faiss_index = state.pop("faiss_index")
         super().__setstate__(state)
         self.index = self._faiss.deserialize_index(faiss_index)

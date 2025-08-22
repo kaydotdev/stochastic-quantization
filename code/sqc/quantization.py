@@ -5,10 +5,14 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import check_is_fitted, check_random_state
 
-from .centroids_storage.factory import CentroidStorage, StorageBackendType, CentroidStorageFactory
+from .centroids_storage.factory import (
+    CentroidStorage,
+    StorageBackendType,
+    CentroidStorageFactory,
+)
 from .progress_tracking import tqdm_joblib, tqdm
-from .utils import batched_iterable
 from .optim import BaseOptimizer
+from .utils import batched
 
 
 class StochasticQuantization(BaseEstimator, ClusterMixin):
@@ -34,22 +38,22 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
     """
 
     def __init__(
-            self,
-            optim: BaseOptimizer,
-            *,
-            n_clusters: Union[int, np.uint] = 2,
-            max_iter: Union[int, np.uint] = 1,
-            learning_rate: Union[float, np.float64] = 0.001,
-            rank: Union[int, np.uint] = 3,
-            verbose: Union[int, np.uint] = 0,
-            backend: StorageBackendType = "numpy",
-            element_selection_method: Optional[str] = None,
-            init: Optional[Union[str, np.ndarray]] = None,
-            tol: Optional[Union[float, np.float64]] = None,
-            log_step: Optional[Union[int, np.uint]] = None,
-            random_state: Optional[np.random.RandomState] = None,
-            backend_kwargs: dict = None,
-            **kwargs
+        self,
+        optim: BaseOptimizer,
+        *,
+        n_clusters: Union[int, np.uint] = 2,
+        max_iter: Union[int, np.uint] = 1,
+        learning_rate: Union[float, np.float64] = 0.001,
+        rank: Union[int, np.uint] = 3,
+        verbose: Union[int, np.uint] = 0,
+        backend: StorageBackendType = "numpy",
+        element_selection_method: Optional[str] = None,
+        init: Optional[Union[str, np.ndarray]] = None,
+        tol: Optional[Union[float, np.float64]] = None,
+        log_step: Optional[Union[int, np.uint]] = None,
+        random_state: Optional[np.random.RandomState] = None,
+        backend_kwargs: dict = None,
+        **kwargs,
     ):
         """Initialize Stochastic Quantization solver with provided hyperparameters.
 
@@ -159,7 +163,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
     @property
     def cluster_centers_(self) -> np.ndarray:
         """Returns the cluster centers (centroids).
-        
+
         Returns
         -------
         np.ndarray
@@ -186,8 +190,7 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
                 ksi = (ksi_j for ksi_j in random_state.permutation(X))
             case "sample":
                 ksi = (
-                    X[j]
-                    for j in random_state.choice(X_len, size=X_len, replace=True)
+                    X[j] for j in random_state.choice(X_len, size=X_len, replace=True)
                 )
             case _:
                 raise ValueError(
@@ -267,24 +270,40 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
 
             if n_jobs == 1:
                 for ksi_j in tqdm(
-                        ksi, total=X_len, desc="Performing cluster optimization", disable=not self._verbose_progress
+                    ksi,
+                    total=X_len,
+                    desc="Performing cluster optimization",
+                    disable=not self._verbose_progress,
                 ):
-                    self._optimize(self._centroid_storage, self._optim, ksi_j, self._rank, self._learning_rate)
+                    self._optimize(
+                        self._centroid_storage,
+                        self._optim,
+                        ksi_j,
+                        self._rank,
+                        self._learning_rate,
+                    )
                     self.n_step_ += 1
                     self.__log_step(X, X_len)
             else:
                 with tqdm_joblib(
-                        total=X_len, desc="Performing cluster optimization", disable=not self._verbose_progress):
+                    total=X_len,
+                    desc="Performing cluster optimization",
+                    disable=not self._verbose_progress,
+                ):
                     size = self._log_step or X_len
-                    for ksi_batch in batched_iterable(ksi, size):
-                        joblib.Parallel(n_jobs=n_jobs, max_nbytes=self._kwargs.get('joblib_max_nbytes', '50M'))(
+                    for ksi_batch in batched(ksi, size):
+                        joblib.Parallel(
+                            n_jobs=n_jobs,
+                            max_nbytes=self._kwargs.get("joblib_max_nbytes", "50M"),
+                        )(
                             joblib.delayed(self._optimize)(
                                 self._centroid_storage,
                                 self._optim,
                                 ksi_j,
                                 self._rank,
                                 self._learning_rate,
-                            ) for ksi_j in ksi_batch
+                            )
+                            for ksi_j in ksi_batch
                         )
                         self.n_step_ += size
                         self.__log_step(X, X_len)
@@ -333,8 +352,13 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         return self.iteration_loss_history_[-2] - current_loss < self._tol
 
     @staticmethod
-    def _optimize(centroid_storage: CentroidStorage, optim: BaseOptimizer, ksi_j: np.array, rank: int,
-                  learning_rate: Union[float, np.float64]):
+    def _optimize(
+        centroid_storage: CentroidStorage,
+        optim: BaseOptimizer,
+        ksi_j: np.array,
+        rank: int,
+        learning_rate: Union[float, np.float64],
+    ):
         """Perform optimization step for a single sample.
         Parameters
         ----------
@@ -348,7 +372,9 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         nearest_quant, quant_ind = centroid_storage.find_nearest_centroid(ksi_j)
 
         grad_fn = (
-            lambda x: rank * np.linalg.norm(ksi_j - x, ord=2) ** (rank - 2) * (x - ksi_j)
+            lambda x: rank
+            * np.linalg.norm(ksi_j - x, ord=2) ** (rank - 2)
+            * (x - ksi_j)
         )
 
         delta = optim.step(grad_fn, nearest_quant, learning_rate)
@@ -382,12 +408,21 @@ class StochasticQuantization(BaseEstimator, ClusterMixin):
         if n_jobs == 1:
             clusters = [
                 _predict(self._centroid_storage, target)
-                for target in tqdm(X, desc="Prediction of the closet cluster", disable=not self._verbose_progress)
+                for target in tqdm(
+                    X,
+                    desc="Prediction of the closet cluster",
+                    disable=not self._verbose_progress,
+                )
             ]
         else:
-            with tqdm_joblib(total=len(X), desc="Prediction of the closet cluster", disable=not self._verbose_progress):
+            with tqdm_joblib(
+                total=len(X),
+                desc="Prediction of the closet cluster",
+                disable=not self._verbose_progress,
+            ):
                 clusters = joblib.Parallel(n_jobs=n_jobs)(
-                    joblib.delayed(_predict)(self._centroid_storage, target) for target in X
+                    joblib.delayed(_predict)(self._centroid_storage, target)
+                    for target in X
                 )
 
         return clusters

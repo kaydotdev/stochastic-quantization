@@ -1,13 +1,14 @@
-# Stochastic Quasi-Gradient K-means (SQG-clustering)
+# Stochastic Quasi-Gradient Clustering
 
-This repository explores an implementation of the **Stochastic Quasi-Gradient K-means** (also referred to as the
-**Stochastic Quantization algorithm**), a robust and scalable alternative to existing K-means solvers, designed to 
-handle large datasets and utilize memory more efficiently during computation. The implementation examines the 
-application of the algorithm to high-dimensional unsupervised and semi-supervised learning tasks. The repository 
-contains both a Python package for reproducing experimental results and a LaTeX manuscript documenting the theoretical 
-and experimental outcomes of the algorithm. The Python package continues to evolve independently of the research
-documentation; therefore, to reproduce specific results presented in the paper, researchers should refer to the
-commit hash mentioned in the description.
+This repository presents an implementation of **Stochastic Quasi-Gradient Clustering** (alternatively termed 
+**Stochastic Quantization** within the machine learning domain), a robust and scalable alternative to existing 
+K-means solvers. The algorithm is specifically designed to handle large-scale datasets while optimizing memory 
+utilization during computational processes. This implementation investigates the application of the algorithm to 
+high-dimensional unsupervised and semi-supervised learning tasks. The repository contains both a Python package 
+for reproducing experimental results and a LaTeX manuscript documenting the theoretical and experimental outcomes 
+of the algorithm. The Python package continues to evolve independently of the research documentation; therefore, 
+to reproduce specific results presented in the paper, researchers should refer to the commit hash mentioned in 
+the description.
 
 ## Example
 
@@ -21,20 +22,20 @@ from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
-import sqg
+import sqc
 
 
 # Load the Iris dataset
 X, _ = load_iris(return_X_y=True)
 
 # Create an optimizer for SQG-clustering
-optimizer = sqg.SGDOptimizer()
+optimizer = sqc.SGDOptimizer()
 
 # Create and fit a pipeline with preprocessing and SQG-clustering
 pipeline = Pipeline(
     [
         ("scaler", StandardScaler()),  # Scale features to have mean=0 and variance=1
-        ("sqg", sqg.StochasticQuantization(optimizer, n_clusters=3)),
+        ("sqc", sqc.StochasticQuantization(optimizer, n_clusters=3)),
     ]
 ).fit(X)
 

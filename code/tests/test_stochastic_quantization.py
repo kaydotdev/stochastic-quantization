@@ -3,15 +3,19 @@ import numpy as np
 
 from sklearn.exceptions import NotFittedError
 
-from sqg.optim import SGDOptimizer
-from sqg.quantization import StochasticQuantization
+from sqc.optim import SGDOptimizer
+from sqc.quantization import StochasticQuantization
 
 
 class TestStochasticQuantization(unittest.TestCase):
     def setUp(self):
         self.random_state = np.random.RandomState(seed=42)
         self.algorithm = StochasticQuantization(
-            SGDOptimizer(), n_clusters=2, max_iter=1, random_state=self.random_state, log_step=100
+            SGDOptimizer(),
+            n_clusters=2,
+            max_iter=1,
+            random_state=self.random_state,
+            log_step=100,
         )
         self.X = np.array(
             [
@@ -150,7 +154,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init="sample",
-            log_step=100
+            log_step=100,
         )
 
         expected_cluster_centers = np.array(
@@ -183,7 +187,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init="random",
-            log_step=100
+            log_step=100,
         )
 
         expected_cluster_centers = np.array(
@@ -216,7 +220,7 @@ class TestStochasticQuantization(unittest.TestCase):
             max_iter=1,
             random_state=self.random_state,
             init="k-means++",
-            log_step=100
+            log_step=100,
         )
 
         expected_cluster_centers = np.array(

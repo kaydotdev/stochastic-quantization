@@ -6,7 +6,12 @@ from scipy import optimize, sparse
 from sklearn import metrics
 
 
-def init_centroids(init: np.ndarray | str, n_clusters: int, x: np.ndarray, random_state: np.random.RandomState):
+def init_centroids(
+    init: np.ndarray | str,
+    n_clusters: int,
+    x: np.ndarray,
+    random_state: np.random.RandomState,
+):
     x_len, x_dims = x.shape
     match init:
         case _ if isinstance(init, np.ndarray):
@@ -26,24 +31,19 @@ def init_centroids(init: np.ndarray | str, n_clusters: int, x: np.ndarray, rando
 
             return init.copy()
         case "sample":
-            random_indices = random_state.choice(
-                x_len, size=n_clusters, replace=False
-            )
+            random_indices = random_state.choice(x_len, size=n_clusters, replace=False)
             return x[random_indices]
         case "random":
             return random_state.rand(n_clusters, x_dims)
         case "milp":
             return _milp(x, n_clusters)
         case "k-means++" | None:
-            return _kmeans_plus_plus(
-                x, n_clusters, random_state
-            )
+            return _kmeans_plus_plus(x, n_clusters, random_state)
         case _:
             raise ValueError(
                 f"Initialization strategy ‘{init}’ is not a valid option. Supported options are "
                 "{‘sample’, ‘random’, ‘k-means++’, ‘milp’}."
             )
-
 
 
 def _kmeans_plus_plus(

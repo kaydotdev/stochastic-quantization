@@ -394,9 +394,8 @@ class AdamOptimizer(BaseOptimizer):
         self.variance_term = beta2 * self.variance_term + (1 - beta2) * grad_x**2
 
         return (
-            (learning_rate / np.sqrt(self.variance_term + self.var_eps))
-            * self.momentum_term
-        )
+            learning_rate / np.sqrt(self.variance_term + self.var_eps)
+        ) * self.momentum_term
 
     def reset(self) -> None:
         self.momentum_term = None
